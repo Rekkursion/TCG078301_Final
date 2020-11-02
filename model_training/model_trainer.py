@@ -13,8 +13,6 @@ def do_process():
     print('num of  reals:', reals.shape[0])
     # step 2. split the data
     x_train, y_train, x_test, y_test = split_data(animes, reals, 0.7)
-    x_test_origin = x_test
-    y_test_origin = y_test
     # step 3. categorize the label data
     y_train = to_categorical(y_train)
     y_test = to_categorical(y_test)
@@ -23,7 +21,9 @@ def do_process():
     # step 5. train the built model
     model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=cfg['EPOCH'])
     # step 6. predict the testing-data to evaluate the trained model
-    prediction = model.predict_classes(x_test)
+    print('\nEvaluation:')
+    loss, accuracy = model.evaluate(x_test, y_test, cfg['BATCH_SIZE'], 1)
+    print('loss:', loss, '| accuracy:', accuracy, end='\n\n')
     # step 7. save the trained model
     model.save('./RekkModel.h5')
     print('The \"RekkModel.h5\" has been trained and saved successfully.')

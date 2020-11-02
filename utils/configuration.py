@@ -1,7 +1,10 @@
 # some configuration pertains to the model training
 configuration = {
     # the number of epochs when doing training
-    'EPOCH': 5,
+    'EPOCH': 25,
+
+    # the batch size
+    'BATCH_SIZE': 32,
 
     # the designated size of images
     'SIZE_OF_IMGS': (128, 128),
