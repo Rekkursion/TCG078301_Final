@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="lbl_show_image">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>801</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>檔案 File</string>
+    </property>
+    <widget class="QMenu" name="menu_Load">
+     <property name="title">
+      <string>載入 Load</string>
+     </property>
+     <addaction name="action_load_image"/>
+    </widget>
+    <addaction name="menu_Load"/>
+   </widget>
+   <widget class="QMenu" name="menu_Start">
+    <property name="title">
+     <string>偵測 Detect</string>
+    </property>
+    <addaction name="action_start_detect"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Start"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_load_image">
+   <property name="text">
+    <string>圖片 Image</string>
+   </property>
+  </action>
+  <action name="action_start_detect">
+   <property name="text">
+    <string>開始 Start</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

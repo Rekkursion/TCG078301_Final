@@ -24,9 +24,9 @@ def do_process():
     print('\nEvaluation:')
     loss, accuracy = model.evaluate(x_test, y_test, cfg['BATCH_SIZE'], 1)
     print('loss:', loss, '| accuracy:', accuracy, end='\n\n')
-    # step 7. save the trained model
-    model.save('./RekkModel.h5')
-    print('The \"RekkModel.h5\" has been trained and saved successfully.')
+    # step 7. save the weights of the trained model
+    model.save_weights('./pretrained_model/rekk_model.h5')
+    print('The model has been trained and saved successfully.')
     print('END of training')
 
 

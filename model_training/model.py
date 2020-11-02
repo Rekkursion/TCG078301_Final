@@ -1,5 +1,10 @@
+from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten
+from PIL import Image
+import numpy as np
+from utils.configuration import configuration as cfg
+from app.pref import *
 
 
 # the model to be used in detecting the 2D and 3D images
@@ -32,3 +37,12 @@ class RekkModel(Sequential):
         # the fully-connected layers
         self.add(Dense(128, activation='relu'))
         self.add(Dense(num_classes, activation='softmax'))
+
+    # do the prediction from a designated model
+    def do_prediction(self):
+        img = Image.open(pref[CUR_LOADED_IMG])
+        img = img.resize(cfg['SIZE_OF_IMGS'], Image.ANTIALIAS).convert(mode='RGB')
+        # noinspection PyArgumentList
+        arr = np.asarray(img).reshape(1, cfg['SIZE_OF_IMGS'][0], cfg['SIZE_OF_IMGS'][1], 3)
+        pred = self.predict_classes(arr)
+        print('predicted:', cfg['CLS_NAMES'][pred[0]])
