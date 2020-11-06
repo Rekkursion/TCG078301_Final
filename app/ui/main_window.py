@@ -1,7 +1,8 @@
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
-from app.pref import *
+import os
+from app import pref_helpers as helper
 
 
 class MainWindow(QMainWindow):
@@ -36,19 +37,24 @@ class MainWindow(QMainWindow):
         self.lbl_show_image.resize(img.width(), img.height())
         self.resize(img.width(), img.height())
         # set the preference value of currently-loaded image
-        pref[CUR_LOADED_IMG] = file_path
+        helper.set_image_file_path(file_path)
 
     # the triggered-event of the action-load-image
     def action_load_image_triggered(self):
         # open the file-dialog and get the designated image file
-        filename, _ = QFileDialog.getOpenFileName(
+        filename, f_type = QFileDialog.getOpenFileName(
             parent=self,
             caption='選擇圖片 Choose an image',
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
-        # load the selected image on the main-label
-        self.load_image(filename)
+        # if the selected file doesn't exist or it is not a proper file
+        if not os.path.exists(filename) or not os.path.isfile(filename):
+            pass
+        # else, load the selected image on the main-label
+        else:
+            self.load_image(filename)
 
     # the triggered-event of the action-start-detect
-    def action_start_detect_triggered(self):
-        pref[MODEL].do_prediction()
+    @staticmethod
+    def action_start_detect_triggered():
+        helper.get_model().do_prediction()
