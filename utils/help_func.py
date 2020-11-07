@@ -1,9 +1,11 @@
 import numpy as np
 import os
+import cv2
 import matplotlib.pyplot as plt
 from PIL import Image
 from random import randint
 from utils.configuration import configuration as cfg
+from app import pref_helpers as helper
 
 
 # randomly get an index in a certain range starts from zero
@@ -101,3 +103,28 @@ def show_detail_of_predicted(x_test_origin, y_test_origin, prediction, idx=-1):
         idx = get_idx(x_test_origin.shape[0])
     print('   predicted:', cfg['CLS_NAMES'][prediction[idx]])
     print('ground truth:', cfg['CLS_NAMES'][y_test_origin[idx]])
+
+
+# get the face through an original image and a detected face-box on it
+def get_face(img, box):
+    x1, y1, x2, y2, _ = box.astype(np.int)
+    x1, y1 = abs(x1), abs(y1)
+    face = img[y1:y2, x1:x2]
+    return face, (x1, y1), (x2, y2)
+
+
+# detect the faces of an image by retinaface
+def detect_faces(img):
+    # if there's no image, return directly
+    if img is None:
+        return
+    # get the retinaface model
+    retinaface = helper.get_retinaface_model()
+    # if the model is loaded successfully
+    if retinaface is not None:
+        cv2.imshow(helper.get_image_file_path(), img)
+        faces, landmarks = retinaface.detect(img, threshold=0.5, scale=1.0)
+        if faces is not None:
+            for k in range(faces.shape[0]):
+                face, pt_1, pt_2 = get_face(img, faces[k])
+                cv2.imshow('face ' + str(k), face)

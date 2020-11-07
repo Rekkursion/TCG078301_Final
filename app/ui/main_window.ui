@@ -6,37 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>869</width>
+    <height>227</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="lbl_show_image">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>801</width>
-      <height>551</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
+  <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>869</width>
      <height>25</height>
     </rect>
    </property>
@@ -52,14 +35,7 @@
     </widget>
     <addaction name="menu_Load"/>
    </widget>
-   <widget class="QMenu" name="menu_Start">
-    <property name="title">
-     <string>偵測 Detect</string>
-    </property>
-    <addaction name="action_start_detect"/>
-   </widget>
    <addaction name="menu_File"/>
-   <addaction name="menu_Start"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_load_image">
