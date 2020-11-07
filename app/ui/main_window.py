@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 import os
 import cv2
 from app import pref_helpers as helper
-from utils.help_func import get_face, detect_faces, judge_avatars
+from utils.help_func import get_face, detect_faces, judge_avatars, draw_boxes
 
 
 class MainWindow(QMainWindow):
@@ -42,4 +42,6 @@ class MainWindow(QMainWindow):
             # detect faces and face-boxes of the original image by retinaface
             detected_faces = detect_faces(helper.get_current_image())
             # judge the detected faces into 2d or 3d avatars
-            judge_avatars(helper.get_current_image(), detected_faces)
+            judged_faces = judge_avatars(detected_faces)
+            # draw the boxes of detected-and-judged faces w/ the corresponding colors
+            draw_boxes(helper.get_current_image(), judged_faces)

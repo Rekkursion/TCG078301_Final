@@ -93,11 +93,6 @@ def split_data(animes, reals, ratio):
     return x_train, y_train, x_test, y_test
 
 
-# convert a numpy-array into a PIL-image
-def nparray_to_image(arr, mode=None):
-    return Image.fromarray(np.uint8(arr), mode)
-
-
 # show the detail of a predicted testing-image
 def show_detail_of_predicted(x_test_origin, y_test_origin, prediction, idx=-1):
     if idx < 0:
@@ -125,7 +120,6 @@ def detect_faces(img):
     ret = []
     # if the model is loaded successfully
     if retinaface is not None:
-        cv2.imshow(helper.get_image_file_path(), img)
         faces, landmarks = retinaface.detect(img, threshold=0.5, scale=1.0)
         if faces is not None:
             for k in range(faces.shape[0]):
@@ -136,16 +130,36 @@ def detect_faces(img):
 
 
 # judge if the passed faces are 2d or 3d avatars respectively
-def judge_avatars(orig_img, detected_faces):
+def judge_avatars(detected_faces):
+    # the result-list
+    ret = []
+    # loaded the pre-trained rekk-model
     rekk = helper.get_rekk_model()
     if rekk is not None:
+        # iterate all the detected faces
         for (face, pt_1, pt_2) in detected_faces:
+            # do the prediction on a single detected face
             pred = rekk.do_prediction(face)
-            # todo: draw boxes w/ the predictions correspondingly
-            print(pred)
+            # add the prediction into the result-list
+            ret.append((face, pt_1, pt_2, pred))
+            # print(pred)
     else:
         # todo: exception handling
         print('wtf')
+    # return the list of results
+    return ret
+
+
+# draw the boxes of the detected-and-judged faces (avatars) on the originally-loaded image
+def draw_boxes(orig_img, judged_faces):
+    # iterate all detected-and-judged faces (avatars)
+    for (_, pt_1, pt_2, judged_label) in judged_faces:
+        # draw the rectangle on a single face
+        cv2.rectangle(orig_img, pt_1, pt_2, cfg['BOX_CLRS'][judged_label], 2)
+        # put the judged label on the corresponding face
+        cv2.putText(orig_img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
+    # show the boxes-drawn image
+    cv2.imshow(helper.get_image_file_path(), orig_img)
 
 
 # initialize gpus
