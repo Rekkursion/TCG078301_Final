@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 import os
 import cv2
 from app import pref_helpers as helper
-from utils.help_func import get_face, detect_faces
+from utils.help_func import get_face, detect_faces, judge_avatars
 
 
 class MainWindow(QMainWindow):
@@ -37,7 +37,9 @@ class MainWindow(QMainWindow):
             pass
         # else, load the selected image on the main-label
         else:
-            # set the preference value of currently-loaded image
+            # set the preference value of the currently-loaded image
             helper.set_image_file_path(filename)
-            detect_faces(helper.get_current_image())
-            # helper.get_model().do_prediction()
+            # detect faces and face-boxes of the original image by retinaface
+            detected_faces = detect_faces(helper.get_current_image())
+            # judge the detected faces into 2d or 3d avatars
+            judge_avatars(helper.get_current_image(), detected_faces)

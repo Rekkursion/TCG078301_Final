@@ -1,9 +1,11 @@
+import tensorflow
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten
+from PIL import Image
 import numpy as np
+import cv2
 from utils.configuration import configuration as cfg
-from app import pref_helpers as helper
 
 
 # the model to be used in detecting the 2D and 3D images
@@ -37,12 +39,24 @@ class RekkModel(Sequential):
         self.add(Dense(128, activation='relu'))
         self.add(Dense(num_classes, activation='softmax'))
 
-    # do the prediction from a designated model
-    def do_prediction(self):
-        # get the currently loaded image, return none if not found
-        img = helper.get_current_image()
+    # do the prediction from a designated model and return the label-name of the prediction ('2D' or '3D')
+    def do_prediction(self, img):
         if not (img is None):
-            # noinspection PyArgumentList
-            arr = np.asarray(img).reshape(1, cfg['SIZE_OF_IMGS'][0], cfg['SIZE_OF_IMGS'][1], 3)
-            pred = self.predict_classes(arr)
-            print('predicted:', cfg['CLS_NAMES'][pred[0]])
+            # convert the opencv-image into a pil-image
+            pil_img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_RGB2BGR))\
+                .resize(cfg['SIZE_OF_IMGS'], Image.ANTIALIAS)\
+                .convert(mode='RGB')
+            # then convert the converted image into a numpy-array
+            arr = np.asarray(pil_img)
+            # reshape it to a rank-4 tensor
+            arr = np.reshape(arr, (1, arr.shape[0], arr.shape[1], 3))
+            # use cpu instead of gpu
+            with tensorflow.device('/cpu:0'):
+                # pred = self.predict_classes(arr)
+                # do the prediction
+                pred = np.argmax(self.predict(arr), axis=-1)
+                # return the label of the prediction ('2D' or '3D')
+                return cfg['CLS_NAMES'][pred[0]]
+            # print('predicted:', cfg['CLS_NAMES'][pred[0]])
+        else:
+            return 'NONE'

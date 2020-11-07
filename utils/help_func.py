@@ -1,3 +1,4 @@
+import tensorflow as tf
 import numpy as np
 import os
 import cv2
@@ -120,6 +121,8 @@ def detect_faces(img):
         return
     # get the retinaface model
     retinaface = helper.get_retinaface_model()
+    # the result-list of all detected faces and their boxes
+    ret = []
     # if the model is loaded successfully
     if retinaface is not None:
         cv2.imshow(helper.get_image_file_path(), img)
@@ -127,4 +130,32 @@ def detect_faces(img):
         if faces is not None:
             for k in range(faces.shape[0]):
                 face, pt_1, pt_2 = get_face(img, faces[k])
-                cv2.imshow('face ' + str(k), face)
+                ret.append((face, pt_1, pt_2))
+                # cv2.imshow('face ' + str(k), face)
+    return ret
+
+
+# judge if the passed faces are 2d or 3d avatars respectively
+def judge_avatars(orig_img, detected_faces):
+    rekk = helper.get_rekk_model()
+    if rekk is not None:
+        for (face, pt_1, pt_2) in detected_faces:
+            pred = rekk.do_prediction(face)
+            # todo: draw boxes w/ the predictions correspondingly
+            print(pred)
+    else:
+        # todo: exception handling
+        print('wtf')
+
+
+# initialize gpus
+def init_gpus():
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        try:
+            for gpu in gpus:
+                tf.config.experimental.set_memory_growth(gpu, True)
+            logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+        except RuntimeError as e:
+            print(e)
