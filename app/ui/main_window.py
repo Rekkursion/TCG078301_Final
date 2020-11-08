@@ -29,7 +29,8 @@ class MainWindow(QMainWindow):
         # open the file-dialog and get the designated image file
         filename, f_type = QFileDialog.getOpenFileName(
             parent=self,
-            caption='選擇圖片 Choose an image',
+            caption='選擇圖片或影片 Select an image or a video',
+            # filter='Both (*.jpg *.jpeg *.png *bmp *.mp4 *.avi);;Image Files (*.jpg *.jpeg *.png *bmp);;Video Files (*.mp4 *.avi)'
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
         # if the selected file doesn't exist or it is not a proper file

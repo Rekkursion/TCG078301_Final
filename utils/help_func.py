@@ -9,6 +9,7 @@ from random import randint
 from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
+from app.supported_file_types import SupportedFileType
 
 
 # randomly get an index in a certain range starts from zero
@@ -163,11 +164,11 @@ def draw_boxes(orig_img, judged_faces):
         # put the judged label on the corresponding face
         cv2.putText(orig_img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
     # show the boxes-drawn image
-    cv2.imshow(helper.get_image_file_path(), orig_img)
+    cv2.imshow(helper.get_file_path(), orig_img)
     # set the size of the designated opencv-window
-    helper.adjust_cv_window_size(helper.get_image_file_path(), orig_img, reset_size=(orig_img.shape[1], orig_img.shape[0]))
+    helper.adjust_cv_window_size(helper.get_file_path(), orig_img, reset_size=(orig_img.shape[1], orig_img.shape[0]))
     # set the mouse callback to activate by-user events
-    cv2.setMouseCallback(helper.get_image_file_path(), mouse_callback, (helper.get_image_file_path(), orig_img,))
+    cv2.setMouseCallback(helper.get_file_path(), mouse_callback, (helper.get_file_path(), orig_img,))
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
@@ -175,13 +176,37 @@ def do_process(filename, lock):
     # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
     with lock:
         # set the preference value of the currently-loaded image
-        helper.set_image_file_path(filename)
-        # detect faces and face-boxes of the original image by retinaface
-        detected_faces = detect_faces(helper.get_current_image())
-        # judge the detected faces into 2d or 3d avatars
-        judged_faces = judge_avatars(detected_faces)
-        # draw the boxes of detected-and-judged faces w/ the corresponding colors
-        draw_boxes(helper.get_current_image(), judged_faces)
+        helper.set_file_path(filename)
+        # check if file type (image or video)
+        file_type = SupportedFileType.is_supported(filename)
+        # if it's an image
+        if file_type == SupportedFileType.IMAGE:
+            # detect faces and face-boxes of the original image by retinaface
+            detected_faces = detect_faces(helper.get_current_file())
+            # judge the detected faces into 2d or 3d avatars
+            judged_faces = judge_avatars(detected_faces)
+            # draw the boxes of detected-and-judged faces w/ the corresponding colors
+            draw_boxes(helper.get_current_file(), judged_faces)
+        # if it's a video
+        elif file_type == SupportedFileType.VIDEO:
+            cap = helper.get_current_file()
+            while cap.isOpened():
+                success, frame = cap.read()
+                if not success:
+                    # todo: exception handling
+                    print('frame-reading failed')
+                    break
+                # detect faces and face-boxes of the original image by retinaface
+                detected_faces = detect_faces(frame)
+                # judge the detected faces into 2d or 3d avatars
+                judged_faces = judge_avatars(detected_faces)
+                # draw the boxes of detected-and-judged faces w/ the corresponding colors
+                draw_boxes(frame, judged_faces)
+                if cv2.waitKey(1) == 27:
+                    break
+        else:
+            # todo: exception handling
+            pass
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing
     if threading.current_thread() is not threading.main_thread():
         cv2.waitKey(0)

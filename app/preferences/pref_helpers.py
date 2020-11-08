@@ -1,9 +1,9 @@
 import cv2
 import insightface
-import numpy as np
 from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
 from app.preferences.pref import *
+from app.supported_file_types import SupportedFileType
 
 
 # get the pre-trained rekk-model
@@ -16,12 +16,19 @@ def get_retinaface_model():
     return pref[RETINAFACE_MODEL]
 
 
-# get the currently-loaded image as the type of cv2-image
-def get_current_image():
+# get the currently-loaded image/video
+def get_current_file():
     if pref[CUR_LOADED_IMG_FILE_PATH] is None:
         return None
-    img = cv2.imread(pref[CUR_LOADED_IMG_FILE_PATH], cv2.IMREAD_COLOR)
-    return img
+    file_type = SupportedFileType.is_supported(pref[CUR_LOADED_IMG_FILE_PATH])
+    if file_type == SupportedFileType.IMAGE:
+        img = cv2.imread(pref[CUR_LOADED_IMG_FILE_PATH], cv2.IMREAD_COLOR)
+        return img
+    elif file_type == SupportedFileType.VIDEO:
+        cap = cv2.VideoCapture(pref[CUR_LOADED_IMG_FILE_PATH])
+        return cap
+    else:
+        return None
 
 
 # get the lock for processing of detection (and judgement)
@@ -29,13 +36,13 @@ def get_process_lock():
     return pref[PROCESS_LOCK]
 
 
-# get the file path of the loaded image
-def get_image_file_path():
+# get the file path of the loaded image/video
+def get_file_path():
     return pref[CUR_LOADED_IMG_FILE_PATH]
 
 
-# set an image as the loaded image
-def set_image_file_path(file_path):
+# set an image/video as the loaded one
+def set_file_path(file_path):
     pref[CUR_LOADED_IMG_FILE_PATH] = file_path
 
 
