@@ -11,7 +11,10 @@ pref = {
     'CUR_LOADED_IMG_FILE_PATH': None,
 
     # the threading-lock for doing the process of detection (and judgement)
-    'PROCESS_LOCK': Lock()
+    'PROCESS_LOCK': Lock(),
+
+    # the size-offsets of some opencv windows
+    'CV_WIN_SIZES': dict()
 }
 
 
@@ -19,3 +22,4 @@ REKK_MODEL = 'REKK_MODEL'
 RETINAFACE_MODEL = 'RETINAFACE_MODEL'
 CUR_LOADED_IMG_FILE_PATH = 'CUR_LOADED_IMG_FILE_PATH'
 PROCESS_LOCK = 'PROCESS_LOCK'
+CV_WIN_SIZES = 'CV_WIN_SIZES'

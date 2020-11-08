@@ -8,6 +8,7 @@ from PIL import Image
 from random import randint
 from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
+from app.ui.cv2_ui.callbacks import mouse_callback
 
 
 # randomly get an index in a certain range starts from zero
@@ -163,6 +164,10 @@ def draw_boxes(orig_img, judged_faces):
         cv2.putText(orig_img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
     # show the boxes-drawn image
     cv2.imshow(helper.get_image_file_path(), orig_img)
+    # set the size of the designated opencv-window
+    helper.adjust_cv_window_size(helper.get_image_file_path(), orig_img, reset_size=(orig_img.shape[1], orig_img.shape[0]))
+    # set the mouse callback to activate by-user events
+    cv2.setMouseCallback(helper.get_image_file_path(), mouse_callback, (helper.get_image_file_path(), orig_img,))
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively

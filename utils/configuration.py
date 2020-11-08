@@ -25,5 +25,8 @@ configuration = {
     'ANIME_AVATAR_DIR': 'D:/rekkursion/pictures/datasets/anime_avatar/',
 
     # the path of real-avatar files
-    'REAL_AVATAR_DIR': 'D:/rekkursion/pictures/datasets/real_avatar/'
+    'REAL_AVATAR_DIR': 'D:/rekkursion/pictures/datasets/real_avatar/',
+
+    # the scaling factor when resizing the opencv windows activated by mouse-wheeling
+    'SCALING_FACTOR_ON_CV_WIN': 1.1
 }
