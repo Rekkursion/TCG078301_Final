@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         # set the title of the main window
         self.setWindowTitle('TCG078301_Final - B10615031')
         # load the UI
-        uic.loadUi('./ui/main_window.ui', self)
+        uic.loadUi('./ui/pyqt5_ui/main_window.ui', self)
         # initialize the events
         self.init_events()
 

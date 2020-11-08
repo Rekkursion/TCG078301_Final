@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication
-from app.ui.main_window import MainWindow
+from app.ui.pyqt5_ui.main_window import MainWindow
 import sys
 from app.preferences import pref_helpers as helper
 
