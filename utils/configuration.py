@@ -15,6 +15,9 @@ configuration = {
     # the colors of boxes of classes when drawing on the originally-loaded image
     'BOX_CLRS': {'2D': (219, 34, 0), '3D': (97, 212, 12), 'NONE': (255, 255, 255)},
 
+    # the maximum length of the name (title) of an opencv-window
+    'MAX_LEN_OF_WIN_NAME': 500,
+
     # the threshold parameter of retinaface when doing detections
     'RETINAFACE_THRESHOLD': 0.01,
 

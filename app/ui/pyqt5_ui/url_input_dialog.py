@@ -1,11 +1,11 @@
 import socket
-
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PIL import Image, UnidentifiedImageError
 from PIL.GifImagePlugin import GifImageFile
 import urllib
+import numpy as np
 
 
 # the dialog for the user to input the image-URL
@@ -32,15 +32,16 @@ class URLInputDialog(QDialog):
     # initialize the events
     def init_events(self):
         # apply the entered url
-        self.btn_apply.clicked.connect(lambda: {self.get_image_from_url(self.txt_url.text()), self.accept()})
+        self.btn_apply.clicked.connect(lambda: {self.download_image_from_url(self.txt_url.text()), self.accept()})
         # reset the line-edit which is used to enter the url
         self.btn_reset.clicked.connect(lambda: {self.txt_url.setText(''), self.txt_url.setFocus()})
         # cancel the whole action
         self.btn_cancel.clicked.connect(lambda: self.close())
         pass
 
-    # get the image from the designated url-text
-    def get_image_from_url(self, url):
+    # download the image from the designated url-text
+    # noinspection PyUnresolvedReferences
+    def download_image_from_url(self, url):
         try:
             # the pre-defined temporal filename
             filename = './res/dl_imgs/url-loaded'
@@ -51,16 +52,20 @@ class URLInputDialog(QDialog):
             # if the loaded image is a gif, raise the error because the gif format is NOT supported
             if isinstance(img, GifImageFile):
                 raise UnidentifiedImageError
-            # set the image which will be invoked soon
-            self.loaded_img = img
+            # set the image as the loaded one
+            self.loaded_img = np.asarray(img)
         # some possible errors due to the network-related things (url, socket, http, etc.)
         except (socket.error, urllib.error.URLError, urllib.error.HTTPError, urllib.error.ContentTooShortError):
             # todo
-            print('Image loading failed.')
+            print('Image downloading failed.')
         # some possible errors since the loaded image may be with an unknown or unsupported format/content
         except (ValueError, UnidentifiedImageError, OSError):
             # todo
             print('Unknown image file. Please aware that GIF files are NOT supported.')
+
+    # get the user-entered url
+    def get_url(self):
+        return self.txt_url.text()
 
     # get the loaded image if any
     def get_loaded_image(self):

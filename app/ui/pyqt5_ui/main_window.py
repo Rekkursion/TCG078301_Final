@@ -7,6 +7,7 @@ import cv2
 from app.ui.pyqt5_ui.url_input_dialog import URLInputDialog
 from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
+from utils.configuration import configuration as cfg
 
 
 class MainWindow(QMainWindow):
@@ -48,14 +49,17 @@ class MainWindow(QMainWindow):
             caption='選擇圖片 Select an image',
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
-        MainWindow.start_process(filename, cv2.imread(filename, cv2.IMREAD_COLOR))
+        MainWindow.start_process(filename[:cfg['MAX_LEN_OF_WIN_NAME']], cv2.imread(filename, cv2.IMREAD_COLOR))
 
     # the triggered-event of the action-load-from-url
-    def action_load_from_url_triggered(self):
-        url_input_dialog = URLInputDialog()
-        url_input_dialog.show()
-        url_input_dialog.exec()
-        print(type(url_input_dialog.loaded_img))
+    @staticmethod
+    def action_load_from_url_triggered():
+        # create a url-input-dialog to get the image-url
+        dialog = URLInputDialog()
+        # show and execute the created dialog
+        dialog.show()
+        dialog.exec()
+        MainWindow.start_process(dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']], dialog.get_loaded_image())
 
     # the triggered-event of the action-load-from-clipboard
     def action_load_from_clipboard_triggered(self):
