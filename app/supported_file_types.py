@@ -1,6 +1,9 @@
 from enum import Enum
 
 
+""" currently deprecated """
+
+
 # the enum-class of types of supported file (image & video)
 class SupportedFileType(Enum):
     IMAGE = ('.jpg', '.jpeg', '.png', '.bmp')

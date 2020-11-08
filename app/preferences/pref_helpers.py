@@ -30,7 +30,11 @@ def start_framing_face_by_user(x, y):
 
 # finish the by-user face-framing
 def finish_framing_face_by_user(win_name, img, x, y):
+    # if the new point & the original point are the different points
     if pref[FRAMING_PT_1][0] != x or pref[FRAMING_PT_1][1] != y:
+        # resize the passed image into the possibly-adjusted (by wheeling) size
+        img = cv2.resize(img, tuple(pref[CV_WIN_SIZES][win_name]), interpolation=cv2.INTER_CUBIC)
+        # make sure the order of both points
         x1, y1, x2, y2 = make_sure_order_of_points((x, y), pref[FRAMING_PT_1])
         # frame out the user-framing face
         face = img[y1:y2, x1:x2]
@@ -52,6 +56,8 @@ def frame_face_by_user(win_name, img, x, y):
         # to avoid low efficiency, sample a certain frames to do the framing (draw the rectangle), e.g., draw it per 5 times when the mouse-move event is invoked
         pref[SAMPLING_COUNTER_OF_FRAMING] += 1
         if pref[SAMPLING_COUNTER_OF_FRAMING] == cfg['SAMPLING_RATE_OF_FRAMING_ON_CV_WIN']:
+            # resize the passed image into the possibly-adjusted (by wheeling) size
+            img = cv2.resize(img, tuple(pref[CV_WIN_SIZES][win_name]), interpolation=cv2.INTER_CUBIC)
             # copy a new image
             copied = cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE)
             # draw the user-framing rectangle (semi-transparent filled)
@@ -66,6 +72,11 @@ def frame_face_by_user(win_name, img, x, y):
             pref[SAMPLING_COUNTER_OF_FRAMING] = 0
 
 
+# check if the user is currently framing the face
+def is_framing_face_by_user():
+    return pref[FRAMING_FACE_BY_USER]
+
+
 # load the pre-trained models of both rekk-model and retinaface
 def load_pretrained_models():
     # load the pre-trained rekk-model which is used to judge the 2D/3D avatar (face)
@@ -78,6 +89,9 @@ def load_pretrained_models():
 
 # adjust the size of a certain opencv-window
 def resize_cv_window(win_name, img, scaling_factor=None, reset_size=None):
+    # the wheeling event could only be invoked when the user is NOT framing the face
+    if is_framing_face_by_user():
+        return
     new_size = None
     # resize the window by the scaling factor
     if scaling_factor is not None and win_name in pref[CV_WIN_SIZES]:
@@ -86,10 +100,10 @@ def resize_cv_window(win_name, img, scaling_factor=None, reset_size=None):
     elif reset_size is not None:
         new_size = [reset_size[0], reset_size[1]]
     # if either resizing or resetting, apply the adjustment; do nothing if neither of them is chosen
-    if new_size is not None:
+    if new_size is not None and new_size[0] > 10 and new_size[1] > 10:
         # set the new size on preference
         pref[CV_WIN_SIZES][win_name] = new_size
-        # actually size the opencv-window
-        resized = cv2.resize(img, tuple(pref[CV_WIN_SIZES][win_name]), interpolation=cv2.INTER_CUBIC)
+        # actually re-size the opencv-window
+        img = cv2.resize(img, tuple(pref[CV_WIN_SIZES][win_name]), interpolation=cv2.INTER_CUBIC)
         # re-show the resized/reset'd image
-        cv2.imshow(win_name, resized)
+        cv2.imshow(win_name, img)
