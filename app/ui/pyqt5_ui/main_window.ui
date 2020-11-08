@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>869</width>
-    <height>227</height>
+    <width>980</width>
+    <height>195</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>869</width>
+     <width>980</width>
      <height>25</height>
     </rect>
    </property>
@@ -32,6 +32,7 @@
       <string>載入 Load</string>
      </property>
      <addaction name="action_load_from_local"/>
+     <addaction name="action_load_from_url"/>
      <addaction name="action_load_from_clipboard"/>
     </widget>
     <addaction name="menu_Load"/>
@@ -52,6 +53,11 @@
   <action name="action_load_from_clipboard">
    <property name="text">
     <string>從剪貼簿 From clipboard</string>
+   </property>
+  </action>
+  <action name="action_load_from_url">
+   <property name="text">
+    <string>從地址 From URL</string>
    </property>
   </action>
  </widget>

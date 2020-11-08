@@ -4,6 +4,7 @@ from PIL import ImageGrab, Image
 from threading import Thread
 import numpy as np
 import cv2
+from app.ui.pyqt5_ui.url_input_dialog import URLInputDialog
 from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
 
@@ -11,7 +12,8 @@ from utils.help_func import do_process
 class MainWindow(QMainWindow):
     """
         action_load_from_local:     the action for loading the image from local
-        action_load_from_clipboard: the action for loading the image from the windows clipboard
+        action_load_from_url:       the action for loading the image from a certain url
+        action_load_from_clipboard: the action for loading the image from the clipboard (only windows & macs supported)
     """
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -28,6 +30,8 @@ class MainWindow(QMainWindow):
     def init_events(self):
         # connect the triggered-event on the action-load-from-local
         self.action_load_from_local.triggered.connect(self.action_load_from_local_triggered)
+        # connect the triggered-event on the action-load-from-url
+        self.action_load_from_url.triggered.connect(self.action_load_from_url_triggered)
         # connect the triggered-event on the action-load-from-clipboard
         self.action_load_from_clipboard.triggered.connect(self.action_load_from_clipboard_triggered)
 
@@ -45,6 +49,13 @@ class MainWindow(QMainWindow):
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
         MainWindow.start_process(filename, cv2.imread(filename, cv2.IMREAD_COLOR))
+
+    # the triggered-event of the action-load-from-url
+    def action_load_from_url_triggered(self):
+        url_input_dialog = URLInputDialog()
+        url_input_dialog.show()
+        url_input_dialog.exec()
+        print(type(url_input_dialog.loaded_img))
 
     # the triggered-event of the action-load-from-clipboard
     def action_load_from_clipboard_triggered(self):

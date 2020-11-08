@@ -172,6 +172,8 @@ def draw_boxes(win_name, img, judged_faces):
 
 # do the process of judging the faces on an image are 2D or 3D respectively
 def do_process(win_name, img, lock):
+    if img is None:
+        return
     # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
     with lock:
         # detect faces and face-boxes of the original image by retinaface
