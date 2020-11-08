@@ -1,7 +1,8 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
-from PIL import ImageGrab
+from PIL import ImageGrab, Image
 from threading import Thread
+import numpy as np
 import cv2
 from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
@@ -20,6 +21,8 @@ class MainWindow(QMainWindow):
         uic.loadUi('./ui/pyqt5_ui/main_window.ui', self)
         # initialize the events
         self.init_events()
+        # the counter for counting the number of opened images through the clipboard
+        self.clipboard_counter = 0
 
     # initialize the events
     def init_events(self):
@@ -45,5 +48,25 @@ class MainWindow(QMainWindow):
 
     # the triggered-event of the action-load-from-clipboard
     def action_load_from_clipboard_triggered(self):
-        # MainWindow.start_process('')
-        pass
+        # grab data from the clipboard
+        data = ImageGrab.grabclipboard()
+        # if the grabbed data is an image
+        if isinstance(data, Image.Image):
+            MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(data.convert('RGB')))
+            self.clipboard_counter += 1
+        # if the grabbed data is a string, it could possibly be a filename, give it a try
+        elif isinstance(data, str):
+            MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(data, cv2.IMREAD_COLOR))
+            self.clipboard_counter += 1
+        # if the grabbed data is a list
+        elif isinstance(data, list):
+            # iterate the list to try getting the image(s)
+            for item in data:
+                # if this item is an image
+                if isinstance(item, Image.Image):
+                    MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(item.convert('RGB')))
+                    self.clipboard_counter += 1
+                # if this item is a string, it could possibly be a filename, give it a try
+                elif isinstance(item, str):
+                    MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
+                    self.clipboard_counter += 1
