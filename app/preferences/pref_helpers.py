@@ -1,7 +1,9 @@
 import cv2
 import insightface
+import numpy as np
 from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
+from utils.help_func import judge_avatars, draw_boxes, make_sure_order_of_points
 from app.preferences.pref import *
 from app.supported_file_types import SupportedFileType
 
@@ -44,6 +46,50 @@ def get_file_path():
 # set an image/video as the loaded one
 def set_file_path(file_path):
     pref[CUR_LOADED_IMG_FILE_PATH] = file_path
+
+
+# start the by-user face-framing
+def start_framing_face_by_user(x, y):
+    pref[FRAMING_FACE_BY_USER] = True
+    pref[FRAMING_PT_1] = (x, y)
+
+
+# finish the by-user face-framing
+def finish_framing_face_by_user(_, img, x, y):
+    if pref[FRAMING_PT_1][0] != x or pref[FRAMING_PT_1][1] != y:
+        x1, y1, x2, y2 = make_sure_order_of_points((x, y), pref[FRAMING_PT_1])
+        # frame out the user-framing face
+        face = img[y1:y2, x1:x2]
+        # judge it
+        judged = judge_avatars([(face, (x1, y1), (x2, y2))])
+        # draw it out
+        draw_boxes(img, judged)
+    # dispel the status of framing face
+    pref[FRAMING_FACE_BY_USER] = False
+    pref[FRAMING_PT_1] = None
+    # zero-fy the sampling counter
+    pref[SAMPLING_COUNTER_OF_FRAMING] = 0
+
+
+# frame the face by user
+def frame_face_by_user(win_name, img, x, y):
+    # do the framing (draw the rectangle) only if the right button is down
+    if pref[FRAMING_FACE_BY_USER]:
+        # to avoid low efficiency, sample a certain frames to do the framing (draw the rectangle), e.g., draw it per 5 times when the mouse-move event is invoked
+        pref[SAMPLING_COUNTER_OF_FRAMING] += 1
+        if pref[SAMPLING_COUNTER_OF_FRAMING] == cfg['SAMPLING_RATE_OF_FRAMING_ON_CV_WIN']:
+            # copy a new image
+            copied = cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE)
+            # draw the user-framing rectangle (semi-transparent filled)
+            filled_rect = np.zeros(img.shape, np.uint8)
+            cv2.rectangle(filled_rect, (x, y), pref[FRAMING_PT_1], (202, 91, 111), -1)
+            copied = cv2.addWeighted(copied, 0.5, filled_rect, 0.5, 1)
+            # draw the user-framing rectangle (border)
+            cv2.rectangle(copied, (x, y), pref[FRAMING_PT_1], (202, 91, 111), 2)
+            # show the boxes-drawn image
+            cv2.imshow(win_name, copied)
+            # re-zero the sampling counter
+            pref[SAMPLING_COUNTER_OF_FRAMING] = 0
 
 
 # load the pre-trained models of both rekk-model and retinaface

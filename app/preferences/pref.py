@@ -14,7 +14,16 @@ pref = {
     'PROCESS_LOCK': Lock(),
 
     # the size-offsets of some opencv windows
-    'CV_WIN_SIZES': dict()
+    'CV_WIN_SIZES': dict(),
+
+    # the boolean value to check if the user is currently framing the face
+    'FRAMING_FACE_BY_USER': False,
+
+    # the start point of face-framing
+    'FRAMING_PT_1': None,
+
+    # the sampling counter of by-user face-framing
+    'SAMPLING_COUNTER_OF_FRAMING': 0
 }
 
 
@@ -23,3 +32,6 @@ RETINAFACE_MODEL = 'RETINAFACE_MODEL'
 CUR_LOADED_IMG_FILE_PATH = 'CUR_LOADED_IMG_FILE_PATH'
 PROCESS_LOCK = 'PROCESS_LOCK'
 CV_WIN_SIZES = 'CV_WIN_SIZES'
+FRAMING_FACE_BY_USER = 'FRAMING_FACE_BY_USER'
+FRAMING_PT_1 = 'FRAMING_PT_1'
+SAMPLING_COUNTER_OF_FRAMING = 'SAMPLING_COUNTER_OF_FRAMING'

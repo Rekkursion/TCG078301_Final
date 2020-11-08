@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from threading import Thread
 import os
 from app.preferences.pref_helpers import get_process_lock
+from app.supported_file_types import SupportedFileType
 from utils.help_func import do_process
 
 
@@ -29,7 +30,8 @@ class MainWindow(QMainWindow):
         # open the file-dialog and get the designated image file
         filename, f_type = QFileDialog.getOpenFileName(
             parent=self,
-            caption='選擇圖片或影片 Select an image or a video',
+            # caption='選擇圖片或影片 Select an image or a video',
+            caption='選擇圖片 Select an image',
             # filter='Both (*.jpg *.jpeg *.png *bmp *.mp4 *.avi);;Image Files (*.jpg *.jpeg *.png *bmp);;Video Files (*.mp4 *.avi)'
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
@@ -38,4 +40,6 @@ class MainWindow(QMainWindow):
             pass
         # else, load the selected image on the main-label and start doing the process
         else:
-            Thread(target=do_process, daemon=True, args=(filename, get_process_lock(),)).start()
+            # check if file type (image or video)
+            file_type = SupportedFileType.is_supported(filename)
+            Thread(target=do_process, daemon=True, args=(filename, file_type, get_process_lock(),)).start()

@@ -172,13 +172,11 @@ def draw_boxes(orig_img, judged_faces):
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
-def do_process(filename, lock):
+def do_process(filename, file_type, lock):
     # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
     with lock:
         # set the preference value of the currently-loaded image
         helper.set_file_path(filename)
-        # check if file type (image or video)
-        file_type = SupportedFileType.is_supported(filename)
         # if it's an image
         if file_type == SupportedFileType.IMAGE:
             # detect faces and face-boxes of the original image by retinaface
@@ -210,6 +208,20 @@ def do_process(filename, lock):
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing
     if threading.current_thread() is not threading.main_thread():
         cv2.waitKey(0)
+
+
+# make sure the order of two points is from small to big
+def make_sure_order_of_points(pt_1, pt_2):
+    if pt_1[0] < pt_2[0]:
+        if pt_1[1] < pt_2[1]:
+            return pt_1[0], pt_1[1], pt_2[0], pt_2[1]
+        else:
+            return pt_1[0], pt_2[1], pt_2[0], pt_1[1]
+    else:
+        if pt_1[1] < pt_2[1]:
+            return pt_2[0], pt_1[1], pt_1[0], pt_2[1]
+        else:
+            return pt_2[0], pt_2[1], pt_1[0], pt_1[1]
 
 
 # initialize gpus
