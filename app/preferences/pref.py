@@ -7,9 +7,6 @@ pref = {
     # the pre-trained retinaface model from insightface (used to detect the faces from an image)
     'RETINAFACE_MODEL': None,
 
-    # the file path of currently-loaded image
-    'CUR_LOADED_IMG_FILE_PATH': None,
-
     # the threading-lock for doing the process of detection (and judgement)
     'PROCESS_LOCK': Lock(),
 
@@ -29,7 +26,6 @@ pref = {
 
 REKK_MODEL = 'REKK_MODEL'
 RETINAFACE_MODEL = 'RETINAFACE_MODEL'
-CUR_LOADED_IMG_FILE_PATH = 'CUR_LOADED_IMG_FILE_PATH'
 PROCESS_LOCK = 'PROCESS_LOCK'
 CV_WIN_SIZES = 'CV_WIN_SIZES'
 FRAMING_FACE_BY_USER = 'FRAMING_FACE_BY_USER'

@@ -9,7 +9,6 @@ from random import randint
 from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
-from app.supported_file_types import SupportedFileType
 
 
 # randomly get an index in a certain range starts from zero
@@ -156,55 +155,31 @@ def judge_avatars(detected_faces):
 
 
 # draw the boxes of the detected-and-judged faces (avatars) on the originally-loaded image
-def draw_boxes(orig_img, judged_faces):
+def draw_boxes(win_name, img, judged_faces):
     # iterate all detected-and-judged faces (avatars)
     for (_, pt_1, pt_2, judged_label) in judged_faces:
         # draw the rectangle on a single face
-        cv2.rectangle(orig_img, pt_1, pt_2, cfg['BOX_CLRS'][judged_label], 2)
+        cv2.rectangle(img, pt_1, pt_2, cfg['BOX_CLRS'][judged_label], 2)
         # put the judged label on the corresponding face
-        cv2.putText(orig_img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
+        cv2.putText(img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
     # show the boxes-drawn image
-    cv2.imshow(helper.get_file_path(), orig_img)
+    cv2.imshow(win_name, img)
     # set the size of the designated opencv-window
-    helper.adjust_cv_window_size(helper.get_file_path(), orig_img, reset_size=(orig_img.shape[1], orig_img.shape[0]))
+    helper.resize_cv_window(win_name, img, reset_size=(img.shape[1], img.shape[0]))
     # set the mouse callback to activate by-user events
-    cv2.setMouseCallback(helper.get_file_path(), mouse_callback, (helper.get_file_path(), orig_img,))
+    cv2.setMouseCallback(win_name, mouse_callback, (win_name, img,))
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
-def do_process(filename, file_type, lock):
+def do_process(win_name, img, lock):
     # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
     with lock:
-        # set the preference value of the currently-loaded image
-        helper.set_file_path(filename)
-        # if it's an image
-        if file_type == SupportedFileType.IMAGE:
-            # detect faces and face-boxes of the original image by retinaface
-            detected_faces = detect_faces(helper.get_current_file())
-            # judge the detected faces into 2d or 3d avatars
-            judged_faces = judge_avatars(detected_faces)
-            # draw the boxes of detected-and-judged faces w/ the corresponding colors
-            draw_boxes(helper.get_current_file(), judged_faces)
-        # if it's a video
-        elif file_type == SupportedFileType.VIDEO:
-            cap = helper.get_current_file()
-            while cap.isOpened():
-                success, frame = cap.read()
-                if not success:
-                    # todo: exception handling
-                    print('frame-reading failed')
-                    break
-                # detect faces and face-boxes of the original image by retinaface
-                detected_faces = detect_faces(frame)
-                # judge the detected faces into 2d or 3d avatars
-                judged_faces = judge_avatars(detected_faces)
-                # draw the boxes of detected-and-judged faces w/ the corresponding colors
-                draw_boxes(frame, judged_faces)
-                if cv2.waitKey(1) == 27:
-                    break
-        else:
-            # todo: exception handling
-            pass
+        # detect faces and face-boxes of the original image by retinaface
+        detected_faces = detect_faces(img)
+        # judge the detected faces into 2d or 3d avatars
+        judged_faces = judge_avatars(detected_faces)
+        # draw the boxes of detected-and-judged faces w/ the corresponding colors
+        draw_boxes(win_name, img, judged_faces)
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing
     if threading.current_thread() is not threading.main_thread():
         cv2.waitKey(0)

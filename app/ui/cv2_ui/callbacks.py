@@ -12,7 +12,7 @@ def mouse_callback(event, x, y, flags, params):
         if flags < 0:
             factor = 1.0 / factor
         # resize the designated opencv-window by the scaling factor
-        helper.adjust_cv_window_size(params[0], params[1], scaling_factor=factor)
+        helper.resize_cv_window(params[0], params[1], scaling_factor=factor)
     # a mouse-down event (right button)
     elif event == cv2.EVENT_RBUTTONDOWN:
         helper.start_framing_face_by_user(x, y)

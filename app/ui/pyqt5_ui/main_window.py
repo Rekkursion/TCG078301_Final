@@ -1,15 +1,16 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PIL import ImageGrab
 from threading import Thread
-import os
+import cv2
 from app.preferences.pref_helpers import get_process_lock
-from app.supported_file_types import SupportedFileType
 from utils.help_func import do_process
 
 
 class MainWindow(QMainWindow):
     """
-        action_load_image: the action for loading the image
+        action_load_from_local:     the action for loading the image from local
+        action_load_from_clipboard: the action for loading the image from the windows clipboard
     """
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -22,24 +23,27 @@ class MainWindow(QMainWindow):
 
     # initialize the events
     def init_events(self):
-        # connect the triggered-event on the action-load-image
-        self.action_load_image.triggered.connect(self.action_load_image_triggered)
+        # connect the triggered-event on the action-load-from-local
+        self.action_load_from_local.triggered.connect(self.action_load_from_local_triggered)
+        # connect the triggered-event on the action-load-from-clipboard
+        self.action_load_from_clipboard.triggered.connect(self.action_load_from_clipboard_triggered)
 
-    # the triggered-event of the action-load-image
-    def action_load_image_triggered(self):
+    # start the process of detection & judgement of a certain image
+    @staticmethod
+    def start_process(win_name, img):
+        Thread(target=do_process, daemon=True, args=(win_name, img, get_process_lock(),)).start()
+
+    # the triggered-event of the action-load-from-local
+    def action_load_from_local_triggered(self):
         # open the file-dialog and get the designated image file
-        filename, f_type = QFileDialog.getOpenFileName(
+        filename, _ = QFileDialog.getOpenFileName(
             parent=self,
-            # caption='選擇圖片或影片 Select an image or a video',
             caption='選擇圖片 Select an image',
-            # filter='Both (*.jpg *.jpeg *.png *bmp *.mp4 *.avi);;Image Files (*.jpg *.jpeg *.png *bmp);;Video Files (*.mp4 *.avi)'
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
-        # if the selected file doesn't exist or it is not a proper file
-        if not os.path.exists(filename) or not os.path.isfile(filename):
-            pass
-        # else, load the selected image on the main-label and start doing the process
-        else:
-            # check if file type (image or video)
-            file_type = SupportedFileType.is_supported(filename)
-            Thread(target=do_process, daemon=True, args=(filename, file_type, get_process_lock(),)).start()
+        MainWindow.start_process(filename, cv2.imread(filename, cv2.IMREAD_COLOR))
+
+    # the triggered-event of the action-load-from-clipboard
+    def action_load_from_clipboard_triggered(self):
+        # MainWindow.start_process('')
+        pass

@@ -5,7 +5,6 @@ from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
 from utils.help_func import judge_avatars, draw_boxes, make_sure_order_of_points
 from app.preferences.pref import *
-from app.supported_file_types import SupportedFileType
 
 
 # get the pre-trained rekk-model
@@ -18,34 +17,9 @@ def get_retinaface_model():
     return pref[RETINAFACE_MODEL]
 
 
-# get the currently-loaded image/video
-def get_current_file():
-    if pref[CUR_LOADED_IMG_FILE_PATH] is None:
-        return None
-    file_type = SupportedFileType.is_supported(pref[CUR_LOADED_IMG_FILE_PATH])
-    if file_type == SupportedFileType.IMAGE:
-        img = cv2.imread(pref[CUR_LOADED_IMG_FILE_PATH], cv2.IMREAD_COLOR)
-        return img
-    elif file_type == SupportedFileType.VIDEO:
-        cap = cv2.VideoCapture(pref[CUR_LOADED_IMG_FILE_PATH])
-        return cap
-    else:
-        return None
-
-
 # get the lock for processing of detection (and judgement)
 def get_process_lock():
     return pref[PROCESS_LOCK]
-
-
-# get the file path of the loaded image/video
-def get_file_path():
-    return pref[CUR_LOADED_IMG_FILE_PATH]
-
-
-# set an image/video as the loaded one
-def set_file_path(file_path):
-    pref[CUR_LOADED_IMG_FILE_PATH] = file_path
 
 
 # start the by-user face-framing
@@ -55,7 +29,7 @@ def start_framing_face_by_user(x, y):
 
 
 # finish the by-user face-framing
-def finish_framing_face_by_user(_, img, x, y):
+def finish_framing_face_by_user(win_name, img, x, y):
     if pref[FRAMING_PT_1][0] != x or pref[FRAMING_PT_1][1] != y:
         x1, y1, x2, y2 = make_sure_order_of_points((x, y), pref[FRAMING_PT_1])
         # frame out the user-framing face
@@ -63,7 +37,7 @@ def finish_framing_face_by_user(_, img, x, y):
         # judge it
         judged = judge_avatars([(face, (x1, y1), (x2, y2))])
         # draw it out
-        draw_boxes(img, judged)
+        draw_boxes(win_name, img, judged)
     # dispel the status of framing face
     pref[FRAMING_FACE_BY_USER] = False
     pref[FRAMING_PT_1] = None
@@ -103,7 +77,7 @@ def load_pretrained_models():
 
 
 # adjust the size of a certain opencv-window
-def adjust_cv_window_size(win_name, img, scaling_factor=None, reset_size=None):
+def resize_cv_window(win_name, img, scaling_factor=None, reset_size=None):
     new_size = None
     # resize the window by the scaling factor
     if scaling_factor is not None and win_name in pref[CV_WIN_SIZES]:
