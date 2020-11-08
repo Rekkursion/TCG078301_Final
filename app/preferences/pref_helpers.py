@@ -2,7 +2,7 @@ import cv2
 import insightface
 from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
-from app.pref import *
+from app.preferences.pref import *
 
 
 # get the pre-trained rekk-model
@@ -19,10 +19,7 @@ def get_retinaface_model():
 def get_current_image():
     if pref[CUR_LOADED_IMG_FILE_PATH] is None:
         return None
-    # img = Image.open(pref[CUR_LOADED_IMG_FILE_PATH])
-    # img = img.resize(cfg['SIZE_OF_IMGS'], Image.ANTIALIAS).convert(mode='RGB')
     img = cv2.imread(pref[CUR_LOADED_IMG_FILE_PATH], cv2.IMREAD_COLOR)
-    # img = cv2.resize(img, cfg['SIZE_OF_IMGS'], interpolation=cv2.INTER_CUBIC)
     return img
 
 

@@ -1,14 +1,12 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
 import os
-import cv2
-from app import pref_helpers as helper
-from utils.help_func import get_face, detect_faces, judge_avatars, draw_boxes
+from utils.help_func import do_process
 
 
 class MainWindow(QMainWindow):
     """
-        action_load_image:      the action for loading the image
+        action_load_image: the action for loading the image
     """
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -35,13 +33,6 @@ class MainWindow(QMainWindow):
         # if the selected file doesn't exist or it is not a proper file
         if not os.path.exists(filename) or not os.path.isfile(filename):
             pass
-        # else, load the selected image on the main-label
+        # else, load the selected image on the main-label and start doing the process
         else:
-            # set the preference value of the currently-loaded image
-            helper.set_image_file_path(filename)
-            # detect faces and face-boxes of the original image by retinaface
-            detected_faces = detect_faces(helper.get_current_image())
-            # judge the detected faces into 2d or 3d avatars
-            judged_faces = judge_avatars(detected_faces)
-            # draw the boxes of detected-and-judged faces w/ the corresponding colors
-            draw_boxes(helper.get_current_image(), judged_faces)
+            do_process(filename)

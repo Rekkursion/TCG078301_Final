@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from random import randint
 from utils.configuration import configuration as cfg
-from app import pref_helpers as helper
+from app.preferences import pref_helpers as helper
 
 
 # randomly get an index in a certain range starts from zero
@@ -120,7 +120,9 @@ def detect_faces(img):
     ret = []
     # if the model is loaded successfully
     if retinaface is not None:
-        faces, landmarks = retinaface.detect(img, threshold=0.5, scale=1.0)
+        threshold = cfg['RETINAFACE_THRESHOLD']
+        scale = cfg['RETINAFACE_SCALE']
+        faces, landmarks = retinaface.detect(img, threshold=threshold, scale=scale)
         if faces is not None:
             for k in range(faces.shape[0]):
                 face, pt_1, pt_2 = get_face(img, faces[k])
@@ -160,6 +162,18 @@ def draw_boxes(orig_img, judged_faces):
         cv2.putText(orig_img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
     # show the boxes-drawn image
     cv2.imshow(helper.get_image_file_path(), orig_img)
+
+
+# do the process of judging the faces on an image are 2D or 3D respectively
+def do_process(filename):
+    # set the preference value of the currently-loaded image
+    helper.set_image_file_path(filename)
+    # detect faces and face-boxes of the original image by retinaface
+    detected_faces = detect_faces(helper.get_current_image())
+    # judge the detected faces into 2d or 3d avatars
+    judged_faces = judge_avatars(detected_faces)
+    # draw the boxes of detected-and-judged faces w/ the corresponding colors
+    draw_boxes(helper.get_current_image(), judged_faces)
 
 
 # initialize gpus
