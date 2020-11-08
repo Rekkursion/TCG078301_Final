@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import cv2
+import threading
 import matplotlib.pyplot as plt
 from PIL import Image
 from random import randint
@@ -165,15 +166,20 @@ def draw_boxes(orig_img, judged_faces):
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
-def do_process(filename):
-    # set the preference value of the currently-loaded image
-    helper.set_image_file_path(filename)
-    # detect faces and face-boxes of the original image by retinaface
-    detected_faces = detect_faces(helper.get_current_image())
-    # judge the detected faces into 2d or 3d avatars
-    judged_faces = judge_avatars(detected_faces)
-    # draw the boxes of detected-and-judged faces w/ the corresponding colors
-    draw_boxes(helper.get_current_image(), judged_faces)
+def do_process(filename, lock):
+    # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
+    with lock:
+        # set the preference value of the currently-loaded image
+        helper.set_image_file_path(filename)
+        # detect faces and face-boxes of the original image by retinaface
+        detected_faces = detect_faces(helper.get_current_image())
+        # judge the detected faces into 2d or 3d avatars
+        judged_faces = judge_avatars(detected_faces)
+        # draw the boxes of detected-and-judged faces w/ the corresponding colors
+        draw_boxes(helper.get_current_image(), judged_faces)
+    # if the current thread is not the main thread, wait for user's action to avoid window-flashing
+    if threading.current_thread() is not threading.main_thread():
+        cv2.waitKey(0)
 
 
 # initialize gpus

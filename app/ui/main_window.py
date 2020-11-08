@@ -1,6 +1,8 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from threading import Thread
 import os
+from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
 
 
@@ -35,4 +37,4 @@ class MainWindow(QMainWindow):
             pass
         # else, load the selected image on the main-label and start doing the process
         else:
-            do_process(filename)
+            Thread(target=do_process, daemon=True, args=(filename, get_process_lock(),)).start()

@@ -1,3 +1,5 @@
+from threading import Lock
+
 pref = {
     # the pre-trained rekk-model (used to judge a face image is a 2D or a 3D avatar)
     'REKK_MODEL': None,
@@ -6,10 +8,14 @@ pref = {
     'RETINAFACE_MODEL': None,
 
     # the file path of currently-loaded image
-    'CUR_LOADED_IMG_FILE_PATH': None
+    'CUR_LOADED_IMG_FILE_PATH': None,
+
+    # the threading-lock for doing the process of detection (and judgement)
+    'PROCESS_LOCK': Lock()
 }
 
 
 REKK_MODEL = 'REKK_MODEL'
 RETINAFACE_MODEL = 'RETINAFACE_MODEL'
 CUR_LOADED_IMG_FILE_PATH = 'CUR_LOADED_IMG_FILE_PATH'
+PROCESS_LOCK = 'PROCESS_LOCK'

@@ -23,6 +23,11 @@ def get_current_image():
     return img
 
 
+# get the lock for processing of detection (and judgement)
+def get_process_lock():
+    return pref[PROCESS_LOCK]
+
+
 # get the file path of the loaded image
 def get_image_file_path():
     return pref[CUR_LOADED_IMG_FILE_PATH]
