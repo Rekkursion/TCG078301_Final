@@ -5,6 +5,7 @@ from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
 from utils.help_func import judge_avatars, draw_boxes, make_sure_order_of_points
 from app.preferences.pref import *
+from app.loaded_image import get_processed_image, update_processed_image
 
 
 # get the pre-trained rekk-model
@@ -29,11 +30,14 @@ def start_framing_face_by_user(x, y):
 
 
 # finish the by-user face-framing
-def finish_framing_face_by_user(win_name, img, x, y):
+def finish_framing_face_by_user(win_name, x, y):
+    img = get_processed_image(win_name)
+    if img is None:
+        return
     # if the new point & the original point are the different points
     if pref[FRAMING_PT_1][0] != x or pref[FRAMING_PT_1][1] != y:
         # resize the passed image into the possibly-adjusted (by wheeling) size
-        img = cv2.resize(img, tuple(pref[CV_WIN_SIZES][win_name]), interpolation=cv2.INTER_CUBIC)
+        img = cv2.resize(img, (img.shape[1], img.shape[0]), interpolation=cv2.INTER_CUBIC)
         # make sure the order of both points
         x1, y1, x2, y2 = make_sure_order_of_points((x, y), pref[FRAMING_PT_1])
         # frame out the user-framing face
@@ -50,18 +54,21 @@ def finish_framing_face_by_user(win_name, img, x, y):
 
 
 # frame the face by user
-def frame_face_by_user(win_name, img, x, y):
+def frame_face_by_user(win_name, x, y):
+    img = get_processed_image(win_name)
+    if img is None:
+        return
     # do the framing (draw the rectangle) only if the right button is down
     if pref[FRAMING_FACE_BY_USER]:
         # to avoid low efficiency, sample a certain frames to do the framing (draw the rectangle), e.g., draw it per 5 times when the mouse-move event is invoked
         pref[SAMPLING_COUNTER_OF_FRAMING] += 1
         if pref[SAMPLING_COUNTER_OF_FRAMING] == cfg['SAMPLING_RATE_OF_FRAMING_ON_CV_WIN']:
             # resize the passed image into the possibly-adjusted (by wheeling) size
-            img = cv2.resize(img, tuple(pref[CV_WIN_SIZES][win_name]), interpolation=cv2.INTER_CUBIC)
+            new_img = cv2.resize(img, (img.shape[1], img.shape[0]), interpolation=cv2.INTER_CUBIC)
             # copy a new image
-            copied = cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE)
+            copied = cv2.copyMakeBorder(new_img, 0, 0, 0, 0, cv2.BORDER_REPLICATE)
             # draw the user-framing rectangle (semi-transparent filled)
-            filled_rect = np.zeros(img.shape, np.uint8)
+            filled_rect = np.zeros(new_img.shape, np.uint8)
             cv2.rectangle(filled_rect, (x, y), pref[FRAMING_PT_1], (202, 91, 111), -1)
             copied = cv2.addWeighted(copied, 0.5, filled_rect, 0.5, 1)
             # draw the user-framing rectangle (border)
@@ -88,22 +95,19 @@ def load_pretrained_models():
 
 
 # adjust the size of a certain opencv-window
-def resize_cv_window(win_name, img, scaling_factor=None, reset_size=None):
+def resize_cv_window(win_name, scaling_factor):
     # the wheeling event could only be invoked when the user is NOT framing the face
     if is_framing_face_by_user():
         return
-    new_size = None
-    # resize the window by the scaling factor
-    if scaling_factor is not None and win_name in pref[CV_WIN_SIZES]:
-        new_size = [int(pref[CV_WIN_SIZES][win_name][0] * scaling_factor), int(pref[CV_WIN_SIZES][win_name][1] * scaling_factor)]
-    # reset the window-size
-    elif reset_size is not None:
-        new_size = [reset_size[0], reset_size[1]]
-    # if either resizing or resetting, apply the adjustment; do nothing if neither of them is chosen
-    if new_size is not None and new_size[0] > 10 and new_size[1] > 10:
-        # set the new size on preference
-        pref[CV_WIN_SIZES][win_name] = new_size
-        # actually re-size the opencv-window
-        img = cv2.resize(img, tuple(pref[CV_WIN_SIZES][win_name]), interpolation=cv2.INTER_CUBIC)
-        # re-show the resized/reset'd image
-        cv2.imshow(win_name, img)
+    # get the processed image by the window name
+    img = get_processed_image(win_name)
+    if img is None:
+        return
+    # calculate the new size
+    new_size = (int(img.shape[1] * scaling_factor), int(img.shape[0] * scaling_factor))
+    # actually re-size the opencv-window
+    img = cv2.resize(img, new_size, interpolation=cv2.INTER_CUBIC)
+    # re-show the resized/reset'd image
+    cv2.imshow(win_name, img)
+    # store the processed image back
+    update_processed_image(win_name, img)

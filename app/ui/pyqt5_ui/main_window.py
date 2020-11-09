@@ -72,6 +72,7 @@ class MainWindow(QMainWindow):
         MainWindow.start_process(dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']], dialog.get_loaded_image())
 
     # the triggered-event of the action-load-from-clipboard
+    # noinspection PyTypeChecker
     def action_load_from_clipboard_triggered(self):
         # grab data from the clipboard
         data = ImageGrab.grabclipboard()

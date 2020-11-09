@@ -10,9 +10,6 @@ pref = {
     # the threading-lock for doing the process of detection (and judgement)
     'PROCESS_LOCK': Lock(),
 
-    # the size-offsets of some opencv windows
-    'CV_WIN_SIZES': dict(),
-
     # the boolean value to check if the user is currently framing the face
     'FRAMING_FACE_BY_USER': False,
 
@@ -27,7 +24,6 @@ pref = {
 REKK_MODEL = 'REKK_MODEL'
 RETINAFACE_MODEL = 'RETINAFACE_MODEL'
 PROCESS_LOCK = 'PROCESS_LOCK'
-CV_WIN_SIZES = 'CV_WIN_SIZES'
 FRAMING_FACE_BY_USER = 'FRAMING_FACE_BY_USER'
 FRAMING_PT_1 = 'FRAMING_PT_1'
 SAMPLING_COUNTER_OF_FRAMING = 'SAMPLING_COUNTER_OF_FRAMING'

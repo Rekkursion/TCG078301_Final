@@ -9,6 +9,7 @@ from random import randint
 from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
+from app.loaded_image import update_processed_image
 
 
 # randomly get an index in a certain range starts from zero
@@ -156,6 +157,8 @@ def judge_avatars(detected_faces):
 
 # draw the boxes of the detected-and-judged faces (avatars) on the originally-loaded image
 def draw_boxes(win_name, img, judged_faces):
+    # the original image
+    orig_img = img.copy()
     # iterate all detected-and-judged faces (avatars)
     for (_, pt_1, pt_2, judged_label) in judged_faces:
         # draw the rectangle on a single face
@@ -164,10 +167,10 @@ def draw_boxes(win_name, img, judged_faces):
         cv2.putText(img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
     # show the boxes-drawn image
     cv2.imshow(win_name, img)
-    # set the size of the designated opencv-window
-    helper.resize_cv_window(win_name, img, reset_size=(img.shape[1], img.shape[0]))
+    # store the original image and the processed image
+    update_processed_image(win_name, img, orig_img=orig_img)
     # set the mouse callback to activate by-user events
-    cv2.setMouseCallback(win_name, mouse_callback, (win_name, img,))
+    cv2.setMouseCallback(win_name, mouse_callback, (win_name,))
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
