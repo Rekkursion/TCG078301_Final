@@ -1,5 +1,5 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem
 from PIL import ImageGrab, Image
 from threading import Thread
 import numpy as np
@@ -8,6 +8,7 @@ from app.ui.pyqt5_ui.url_input_dialog import URLInputDialog
 from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
 from utils.configuration import configuration as cfg
+from app.ui.pyqt5_ui.listviews.loaded_images_widget import LoadedImagesWidget
 
 
 class MainWindow(QMainWindow):
@@ -26,6 +27,15 @@ class MainWindow(QMainWindow):
         self.init_events()
         # the counter for counting the number of opened images through the clipboard
         self.clipboard_counter = 0
+
+        # just for testing
+        # img = cv2.imread('...')
+        # widget = LoadedImagesWidget()
+        # widget.set_img_data(img)
+        # item = QListWidgetItem(self.lis_loaded_images)
+        # item.setSizeHint(widget.sizeHint())
+        # self.lis_loaded_images.addItem(item)
+        # self.lis_loaded_images.setItemWidget(item, widget)
 
     # initialize the events
     def init_events(self):
