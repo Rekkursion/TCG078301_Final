@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt
 import cv2
+from app.loaded_image import get_processed_image
 
 
 # noinspection PyUnresolvedReferences
@@ -9,8 +10,15 @@ class LoadedImagesWidget(QWidget):
     # the fixed size of showing the image (w, h)
     fixed_img_size = (80, 100)
 
-    def __init__(self, parent=None):
+    """
+        lbl_img
+        lbl_status
+        lbl_img_size
+        btn_save
+    """
+    def __init__(self, win_name, img, parent=None):
         super(LoadedImagesWidget, self).__init__(parent)
+        self.name = win_name
         self.hbox_all = QHBoxLayout()
         self.vbox_right_side = QVBoxLayout()
         self.lbl_img = QLabel()
@@ -19,6 +27,7 @@ class LoadedImagesWidget(QWidget):
         self.btn_save = QPushButton(text='儲存處理後的圖片 Save the processed image')
         self.init_views()
         self.init_events()
+        self.update_img(img)
 
     # initialize views
     def init_views(self):
@@ -37,8 +46,13 @@ class LoadedImagesWidget(QWidget):
         # todo: save processed image
         self.btn_save.clicked.connect(lambda: print('rekk wtf'))
 
-    def set_img_data(self, img):
-        # resize the passed image
+    # update the status of the process
+    def update_status(self):
+        pass
+
+    # update the image thumbnail
+    def update_img(self, img):
+        # resize the image
         resized = cv2.resize(img, LoadedImagesWidget.fixed_img_size)
         # convert it into the type of q-image
         q_img = QImage(resized.data, *LoadedImagesWidget.fixed_img_size, QImage.Format_RGB888).rgbSwapped()

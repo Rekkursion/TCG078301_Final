@@ -1,5 +1,5 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QListWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from PIL import ImageGrab, Image
 from threading import Thread
 import numpy as np
@@ -8,7 +8,7 @@ from app.ui.pyqt5_ui.url_input_dialog import URLInputDialog
 from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
 from utils.configuration import configuration as cfg
-from app.ui.pyqt5_ui.listviews.loaded_images_widget import LoadedImagesWidget
+from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
 
 
 class MainWindow(QMainWindow):
@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
         action_load_from_local:     the action for loading the image from local
         action_load_from_url:       the action for loading the image from a certain url
         action_load_from_clipboard: the action for loading the image from the clipboard (only windows & macs supported)
+        lis_imgs:                   the list-widget for showing all loaded/processed images
     """
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -23,19 +24,13 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('TCG078301_Final - B10615031')
         # load the UI
         uic.loadUi('./ui/pyqt5_ui/main_window.ui', self)
+        # the list-widget for showing all loaded images
+        self.lis_imgs = LoadedImagesListWidget()
+        self.setCentralWidget(self.lis_imgs)
         # initialize the events
         self.init_events()
         # the counter for counting the number of opened images through the clipboard
         self.clipboard_counter = 0
-
-        # just for testing
-        # img = cv2.imread('...')
-        # widget = LoadedImagesWidget()
-        # widget.set_img_data(img)
-        # item = QListWidgetItem(self.lis_loaded_images)
-        # item.setSizeHint(widget.sizeHint())
-        # self.lis_loaded_images.addItem(item)
-        # self.lis_loaded_images.setItemWidget(item, widget)
 
     # initialize the events
     def init_events(self):
@@ -47,9 +42,9 @@ class MainWindow(QMainWindow):
         self.action_load_from_clipboard.triggered.connect(self.action_load_from_clipboard_triggered)
 
     # start the process of detection & judgement of a certain image
-    @staticmethod
-    def start_process(win_name, img):
+    def start_process(self, win_name, img):
         Thread(target=do_process, daemon=True, args=(win_name, img, get_process_lock(),)).start()
+        self.lis_imgs.push_back(win_name, img)
 
     # the triggered-event of the action-load-from-local
     def action_load_from_local_triggered(self):
@@ -59,17 +54,16 @@ class MainWindow(QMainWindow):
             caption='選擇圖片 Select an image',
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
-        MainWindow.start_process(filename[:cfg['MAX_LEN_OF_WIN_NAME']], cv2.imread(filename, cv2.IMREAD_COLOR))
+        self.start_process(filename[:cfg['MAX_LEN_OF_WIN_NAME']], cv2.imread(filename, cv2.IMREAD_COLOR))
 
     # the triggered-event of the action-load-from-url
-    @staticmethod
-    def action_load_from_url_triggered():
+    def action_load_from_url_triggered(self):
         # create a url-input-dialog to get the image-url
         dialog = URLInputDialog()
         # show and execute the created dialog
         dialog.show()
         dialog.exec()
-        MainWindow.start_process(dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']], dialog.get_loaded_image())
+        self.start_process(dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']], dialog.get_loaded_image())
 
     # the triggered-event of the action-load-from-clipboard
     # noinspection PyTypeChecker
@@ -78,11 +72,11 @@ class MainWindow(QMainWindow):
         data = ImageGrab.grabclipboard()
         # if the grabbed data is an image
         if isinstance(data, Image.Image):
-            MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(data.convert('RGB')))
+            self.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(data.convert('RGB')))
             self.clipboard_counter += 1
         # if the grabbed data is a string, it could possibly be a filename, give it a try
         elif isinstance(data, str):
-            MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(data, cv2.IMREAD_COLOR))
+            self.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(data, cv2.IMREAD_COLOR))
             self.clipboard_counter += 1
         # if the grabbed data is a list
         elif isinstance(data, list):
@@ -90,9 +84,9 @@ class MainWindow(QMainWindow):
             for item in data:
                 # if this item is an image
                 if isinstance(item, Image.Image):
-                    MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(item.convert('RGB')))
+                    self.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(item.convert('RGB')))
                     self.clipboard_counter += 1
                 # if this item is a string, it could possibly be a filename, give it a try
                 elif isinstance(item, str):
-                    MainWindow.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
+                    self.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
                     self.clipboard_counter += 1
