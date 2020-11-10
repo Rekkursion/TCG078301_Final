@@ -1,8 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QSizePolicy
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtCore import Qt
 import cv2
-from app.loaded_image import get_processed_image
 
 
 # noinspection PyUnresolvedReferences
@@ -40,15 +39,20 @@ class LoadedImagesWidget(QWidget):
         self.hbox_all.addWidget(self.lbl_img, 0)
         self.hbox_all.addLayout(self.vbox_right_side, 1)
         self.setLayout(self.hbox_all)
+        # set 'consolas' at all text-related components
+        self.lbl_status.setFont(QFont('Consolas', 9))
+        self.lbl_img_size.setFont(QFont('Consolas', 9))
+        self.btn_save.setFont(QFont('Consolas', 9))
 
     # initialize events
     def init_events(self):
         # todo: save processed image
         self.btn_save.clicked.connect(lambda: print('rekk wtf'))
 
-    # update the status of the process
-    def update_status(self):
-        pass
+    # notify the change of status of the image-process
+    def notify_status_change(self, status):
+        self.lbl_status.setText('狀態 Status: '.format(status.value))
+        self.lbl_status.setStyleSheet('color: rgb{0};'.format(status.get_text_color()[::-1]))
 
     # update the image thumbnail
     def update_img(self, img):
