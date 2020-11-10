@@ -2,12 +2,13 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButt
 from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtCore import Qt
 import cv2
+from app.enums.process_status import ProcessStatus
 
 
 # noinspection PyUnresolvedReferences
 class LoadedImagesWidget(QWidget):
-    # the fixed size of showing the image (w, h)
-    fixed_img_size = (80, 100)
+    # the fixed height of the image (thumbnail)
+    fixed_h = 100
 
     """
         lbl_img
@@ -27,6 +28,7 @@ class LoadedImagesWidget(QWidget):
         self.init_views()
         self.init_events()
         self.update_img(img)
+        self.notify_status_change(ProcessStatus.LOADING)
 
     # initialize views
     def init_views(self):
@@ -51,16 +53,17 @@ class LoadedImagesWidget(QWidget):
 
     # notify the change of status of the image-process
     def notify_status_change(self, status):
-        self.lbl_status.setText('狀態 Status: '.format(status.value))
-        self.lbl_status.setStyleSheet('color: rgb{0};'.format(status.get_text_color()[::-1]))
+        self.lbl_status.setText('狀態 Status: {}'.format(status.value))
+        self.lbl_status.setStyleSheet('color: rgb{};'.format(status.get_text_color()[::-1]))
 
     # update the image thumbnail
     def update_img(self, img):
-        # resize the image
-        resized = cv2.resize(img, LoadedImagesWidget.fixed_img_size)
-        # convert it into the type of q-image
-        q_img = QImage(resized.data, *LoadedImagesWidget.fixed_img_size, QImage.Format_RGB888).rgbSwapped()
-        # show the image
-        self.lbl_img.setPixmap(QPixmap.fromImage(q_img))
+        # calculate the width of the thumbnail
+        img_h, img_w = img.shape[0], img.shape[1]
+        w = int(img_w * (LoadedImagesWidget.fixed_h / img_h))
+        # create a new q-image
+        q_img = QImage(img.data, img.shape[1], img.shape[0], QImage.Format_RGB888).rgbSwapped()
+        # show the created q-image w/ re-scaling to fit the list-widget
+        self.lbl_img.setPixmap(QPixmap.fromImage(q_img).scaled(w, LoadedImagesWidget.fixed_h, Qt.KeepAspectRatio))
         # show its original size
         self.lbl_img_size.setText('[{} x {}]'.format(img.shape[1], img.shape[0]))

@@ -10,6 +10,7 @@ from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
 from app.loaded_image import update_processed_image
+from app.enums.process_status import ProcessStatus
 
 
 # randomly get an index in a certain range starts from zero
@@ -174,17 +175,23 @@ def draw_boxes(win_name, img, judged_faces):
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
-def do_process(win_name, img, lock):
+def do_process(win_name, img, lock, lis):
     if img is None:
         return
     # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
     with lock:
-        # detect faces and face-boxes of the original image by retinaface
-        detected_faces = detect_faces(img)
-        # judge the detected faces into 2d or 3d avatars
-        judged_faces = judge_avatars(detected_faces)
-        # draw the boxes of detected-and-judged faces w/ the corresponding colors
-        draw_boxes(win_name, img, judged_faces)
+        # noinspection PyBroadException
+        try:
+            # detect faces and face-boxes of the original image by retinaface
+            lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.PROCESSING)
+            detected_faces = detect_faces(img)
+            # judge the detected faces into 2d or 3d avatars
+            judged_faces = judge_avatars(detected_faces)
+            # draw the boxes of detected-and-judged faces w/ the corresponding colors
+            draw_boxes(win_name, img, judged_faces)
+            lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.DONE)
+        except BaseException:
+            lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.ERROR)
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing
     if threading.current_thread() is not threading.main_thread():
         cv2.waitKey(0)
