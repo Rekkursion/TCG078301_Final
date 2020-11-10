@@ -10,11 +10,12 @@ class LoadedImagesListWidget(QListWidget):
 
     # push an item into this list
     def push_back(self, win_name, img):
-        widget = LoadedImagesWidget(win_name, img)
-        item = QListWidgetItem(self)
-        item.setSizeHint(widget.sizeHint())
-        self.addItem(item)
-        self.setItemWidget(item, widget)
+        if img is not None:
+            widget = LoadedImagesWidget(win_name, img)
+            item = QListWidgetItem(self)
+            item.setSizeHint(widget.sizeHint())
+            self.addItem(item)
+            self.setItemWidget(item, widget)
 
     # get the designated widget by the corresponding window name
     def get_widget_by_win_name(self, name):
