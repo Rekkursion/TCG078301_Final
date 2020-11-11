@@ -1,69 +1,71 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QSizePolicy
-from PyQt5.QtGui import QImage, QPixmap, QFont
-from PyQt5.QtCore import Qt
-import cv2
+from PyQt5.QtGui import QIcon, QPixmap
 from app.enums.process_status import ProcessStatus
+from app.enums.strings import Strs
 
 
 # noinspection PyUnresolvedReferences
 class LoadedImagesWidget(QWidget):
-    # the fixed height of the image (thumbnail)
-    fixed_h = 100
-
     """
-        lbl_img
+        lbl_order
+        lbl_win_name
+        lbl_size
+        lbl_status_title
         lbl_status
-        lbl_img_size
-        btn_save
+        btn_show_img
+        btn_save_processed
     """
-    def __init__(self, win_name, img, parent=None):
+    def __init__(self, win_name, img, order, parent=None):
         super(LoadedImagesWidget, self).__init__(parent)
-        self.name = win_name
-        self.hbox_all = QHBoxLayout()
-        self.vbox_right_side = QVBoxLayout()
-        self.lbl_img = QLabel()
+        # the window name
+        self.win_name = win_name
+        # some nodes of a single widget
+        self.vbox_all = QVBoxLayout()
+        # nodes of the first row
+        self.hbox_fir = QHBoxLayout()
+        self.lbl_order = QLabel('{} |'.format(order))
+        self.lbl_win_name = QLabel(self.win_name)
+        self.lbl_size = QLabel('[{} x {}]'.format(img.shape[1], img.shape[0]))
+        self.hbox_fir.addWidget(self.lbl_order, 0)
+        self.hbox_fir.addWidget(self.lbl_win_name, 1)
+        self.hbox_fir.addWidget(self.lbl_size, 0)
+        # nodes of the second row
+        self.hbox_sec = QHBoxLayout()
+        self.lbl_status_title = QLabel()
         self.lbl_status = QLabel()
-        self.lbl_img_size = QLabel()
-        self.btn_save = QPushButton(text='儲存處理後的圖片 Save the processed image')
-        self.init_views()
+        self.btn_show_img = QPushButton(QIcon(QPixmap('./res/img_search.png')), '')
+        self.btn_show_img.setStyleSheet("""
+            QPushButton {background-color: transparent;}
+            QPushButton:pressed {background-color: rgb(226, 230, 234);}
+            QPushButton:hover:!pressed {background-color: rgb(226, 230, 234);}
+        """)
+        self.btn_save_processed = QPushButton()
+        self.hbox_sec.addWidget(self.lbl_status_title, 0)
+        self.hbox_sec.addWidget(self.lbl_status, 0)
+        self.hbox_sec.addWidget(self.btn_show_img, 0)
+        self.hbox_sec.addWidget(self.btn_save_processed, 1)
+        # push both the first & the second rows into the all-hbox
+        self.vbox_all.addLayout(self.hbox_fir, 0)
+        self.vbox_all.addLayout(self.hbox_sec, 0)
+        self.setLayout(self.vbox_all)
+        # initialize events
         self.init_events()
-        self.update_img(img)
-        self.notify_status_change(ProcessStatus.LOADING)
-
-    # initialize views
-    def init_views(self):
-        self.lbl_status.setAlignment(Qt.AlignLeft)
-        self.lbl_img_size.setAlignment(Qt.AlignLeft)
-        self.btn_save.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        self.vbox_right_side.addWidget(self.lbl_status, 0)
-        self.vbox_right_side.addWidget(self.lbl_img_size, 0)
-        self.vbox_right_side.addWidget(self.btn_save, 1)
-        self.hbox_all.addWidget(self.lbl_img, 0)
-        self.hbox_all.addLayout(self.vbox_right_side, 1)
-        self.setLayout(self.hbox_all)
-        # set 'consolas' at all text-related components
-        self.lbl_status.setFont(QFont('Consolas', 9))
-        self.lbl_img_size.setFont(QFont('Consolas', 9))
-        self.btn_save.setFont(QFont('Consolas', 9))
+        # register all text-related nodes to the str-enum class
+        Strs.register_all(
+            (self.lbl_status_title, Strs.Loaded_Img_Widget_Status_Title),
+            (self.lbl_status, Strs.Status_Loading),
+            (self.btn_save_processed, Strs.Loaded_Img_Widget_Button_Save_Processed)
+        )
+        # initially change the text-color of the lbl-status
+        self.lbl_status.setStyleSheet('color: rgb{};'.format(ProcessStatus.LOADING.get_text_color()[::-1]))
 
     # initialize events
     def init_events(self):
+        pass
         # todo: save processed image
-        self.btn_save.clicked.connect(lambda: print('rekk wtf'))
+        # self.btn_save.clicked.connect(lambda: print('rekk wtf'))
 
     # notify the change of status of the image-process
     def notify_status_change(self, status):
-        self.lbl_status.setText('狀態 Status: {}'.format(status.value))
+        Strs.register(self.lbl_status, status.value)
         self.lbl_status.setStyleSheet('color: rgb{};'.format(status.get_text_color()[::-1]))
-
-    # update the image thumbnail
-    def update_img(self, img):
-        # calculate the width of the thumbnail
-        img_h, img_w = img.shape[0], img.shape[1]
-        w = int(img_w * (LoadedImagesWidget.fixed_h / img_h))
-        # create a new q-image
-        q_img = QImage(img.data, img.shape[1], img.shape[0], QImage.Format_RGB888).rgbSwapped()
-        # show the created q-image w/ re-scaling to fit the list-widget
-        self.lbl_img.setPixmap(QPixmap.fromImage(q_img).scaled(w, LoadedImagesWidget.fixed_h, Qt.KeepAspectRatio))
-        # show its original size
-        self.lbl_img_size.setText('[{} x {}]'.format(img.shape[1], img.shape[0]))

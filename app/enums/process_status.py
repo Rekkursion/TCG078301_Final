@@ -1,12 +1,13 @@
 from enum import Enum
+from app.enums.strings import Strs
 
 
 # the enum-class of statuses of the image-process
 class ProcessStatus(Enum):
-    LOADING = '載入或等待中 Loading or waiting'
-    PROCESSING = '處理中 Processing'
-    DONE = '處理完畢 Done'
-    ERROR = '有錯誤發生 ERROR happened'
+    LOADING = Strs.Status_Loading
+    PROCESSING = Strs.Status_Processing
+    DONE = Strs.Status_Done
+    ERROR = Strs.Status_Error
 
     # get the text-color of the designated process-status
     def get_text_color(self):

@@ -8,7 +8,7 @@ _registered_dict = dict()
 
 
 # the current displaying language: 0 = chi, 1 = eng
-_cur_lang = 1
+_cur_lang = 0
 
 
 # the current font-family which depends on the language using
@@ -37,8 +37,11 @@ class Strs(Enum):
     URL_Dialog_Reset_Button = ('重置', 'Reset')
     URL_Dialog_Cancel_Button = ('取消', 'Cancel')
 
+    # something related to the widget of the list of loaded-images shown in the main-window
+    Loaded_Img_Widget_Status_Title = ('狀態 :', 'Status:')
+    Loaded_Img_Widget_Button_Save_Processed = ('儲存處理後的圖片', 'Save the processed image')
+
     # something related to the statuses of image-process
-    Status = ('狀態：', 'Status: ')
     Status_Loading = ('載入或等待中', 'Loading or waiting')
     Status_Processing = ('處理中', 'Processing')
     Status_Done = ('處理完畢', 'Done')
@@ -47,12 +50,14 @@ class Strs(Enum):
     # get the literal string by a certain enumeration type
     @staticmethod
     def get_by_enum(str_enum):
-        return str_enum.value[_cur_lang]
+        if isinstance(str_enum, Strs):
+            return str_enum.value[_cur_lang]
+        return str_enum
 
     # register a single node
     @staticmethod
-    def register(node, str_enum):
-        _registered_dict[node] = str_enum
+    def register(node, str_enum_or_literal_str):
+        _registered_dict[node] = str_enum_or_literal_str
         Strs.notify_registered(node)
 
     # register multiple nodes
