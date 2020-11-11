@@ -9,6 +9,7 @@ from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
 from utils.configuration import configuration as cfg
 from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
+from app.enums.strings import Strs
 
 
 class MainWindow(QMainWindow):
@@ -31,6 +32,15 @@ class MainWindow(QMainWindow):
         self.init_events()
         # the counter for counting the number of opened images through the clipboard
         self.clipboard_counter = 0
+        # register all text-related nodes to the str-enum class
+        Strs.register_all(
+            (self, Strs.Main_Window_Title),
+            (self.menu_File, Strs.Menubar_File),
+            (self.menu_Load, Strs.Menubar_File_Load),
+            (self.action_load_from_local, Strs.Menubar_File_Load_From_Local),
+            (self.action_load_from_url, Strs.Menubar_File_Load_From_URL),
+            (self.action_load_from_clipboard, Strs.Menubar_File_Load_From_Clipboard)
+        )
 
     # initialize the events
     def init_events(self):

@@ -6,6 +6,7 @@ from PIL import Image, UnidentifiedImageError
 from PIL.GifImagePlugin import GifImageFile
 import urllib
 import numpy as np
+from app.enums.strings import Strs
 
 
 # the dialog for the user to input the image-URL
@@ -18,8 +19,6 @@ class URLInputDialog(QDialog):
     """
     def __init__(self):
         super(URLInputDialog, self).__init__()
-        # set the title of the main window
-        self.setWindowTitle('URL Dialog')
         # load the UI
         uic.loadUi('./ui/pyqt5_ui/url_input_dialog.ui', self)
         # initialize the events
@@ -28,6 +27,14 @@ class URLInputDialog(QDialog):
         self.setWindowModality(Qt.ApplicationModal)
         # the loaded image if any
         self.loaded_img = None
+        # register all text-related nodes to the str-enum class
+        Strs.register_all(
+            (self, Strs.URL_Input_Dialog_Title),
+            (self.txt_url, Strs.URL_Dialog_Line_Edit_Placeholder),
+            (self.btn_apply, Strs.URL_Dialog_Apply_Button),
+            (self.btn_reset, Strs.URL_Dialog_Reset_Button),
+            (self.btn_cancel, Strs.URL_Dialog_Cancel_Button)
+        )
 
     # initialize the events
     def init_events(self):

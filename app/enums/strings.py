@@ -1,0 +1,100 @@
+from enum import Enum
+from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QMenu, QAction, QLineEdit, QDialog
+from PyQt5.QtGui import QFont
+
+
+# the dictionary to contain all registered nodes (components)
+_registered_dict = dict()
+
+
+# the current displaying language: 0 = chi, 1 = eng
+_cur_lang = 1
+
+
+# the current font-family which depends on the language using
+_font_families = ['微軟正黑體', 'Consolas']
+
+
+# the font size
+_font_size = 9
+
+
+class Strs(Enum):
+    # titles of some windows/dialogs
+    Main_Window_Title = ('二次元/三次元頭像偵測', '2D/3D Detector')
+    URL_Input_Dialog_Title = ('地址輸入對話框', 'URL Input Dialog')
+
+    # something related to the menubar in main-window
+    Menubar_File = ('檔案', 'File')
+    Menubar_File_Load = ('載入', 'Load')
+    Menubar_File_Load_From_Local = ('從本機', 'From local')
+    Menubar_File_Load_From_URL = ('從地址', 'From URL')
+    Menubar_File_Load_From_Clipboard = ('從剪貼簿', 'From clipboard')
+
+    # something related to the url-input-dialog
+    URL_Dialog_Line_Edit_Placeholder = ('在此鍵入圖片地址。', 'Enter the image URL here.')
+    URL_Dialog_Apply_Button = ('套用', 'Apply')
+    URL_Dialog_Reset_Button = ('重置', 'Reset')
+    URL_Dialog_Cancel_Button = ('取消', 'Cancel')
+
+    # something related to the statuses of image-process
+    Status = ('狀態：', 'Status: ')
+    Status_Loading = ('載入或等待中', 'Loading or waiting')
+    Status_Processing = ('處理中', 'Processing')
+    Status_Done = ('處理完畢', 'Done')
+    Status_Error = ('有錯誤發生', 'ERROR happened')
+
+    # get the literal string by a certain enumeration type
+    @staticmethod
+    def get_by_enum(str_enum):
+        return str_enum.value[_cur_lang]
+
+    # register a single node
+    @staticmethod
+    def register(node, str_enum):
+        _registered_dict[node] = str_enum
+        Strs.notify_registered(node)
+
+    # register multiple nodes
+    @staticmethod
+    def register_all(*nodes_and_str_enums):
+        for (node, str_enum) in nodes_and_str_enums:
+            Strs.register(node, str_enum)
+
+    # unregister a node
+    @staticmethod
+    def unregister(node):
+        _registered_dict.pop(node)
+
+    # notify a node to be updated
+    @staticmethod
+    def notify_registered(node):
+        Strs.update_registered(node)
+
+    # notify all registered nodes to be updated
+    @staticmethod
+    def notify_all_registered():
+        for key, _ in _registered_dict.items():
+            Strs.update_registered(key)
+
+    # update a registered node w/ text-changing
+    @staticmethod
+    def update_registered(node):
+        if node in _registered_dict:
+            # get the literal string by the passed-in str-enum
+            literal_str = Strs.get_by_enum(_registered_dict[node])
+            # set the font-family according to the language chosen
+            node.setFont(QFont(_font_families[_cur_lang], _font_size))
+
+            # a q-label, q-push-button, q-action -> set its text
+            if isinstance(node, (QLabel, QPushButton, QAction)):
+                node.setText(literal_str)
+            # q-line-edit -> set its placeholder
+            elif isinstance(node, QLineEdit):
+                node.setPlaceholderText(literal_str)
+            # q-main-window, q-dialog -> set its window-title
+            elif isinstance(node, (QMainWindow, QDialog)):
+                node.setWindowTitle(literal_str)
+            # q-menu -> set its title
+            elif isinstance(node, QMenu):
+                node.setTitle(literal_str)
