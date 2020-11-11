@@ -1,7 +1,9 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QMenu, QAction
 from PyQt5.QtGui import QIcon, QPixmap
+import cv2
 from app.enums.process_status import ProcessStatus
 from app.enums.strings import Strs
+from app.loaded_image import get_processed_image, get_original_image
 
 
 # noinspection PyUnresolvedReferences
@@ -48,22 +50,34 @@ class LoadedImagesWidget(QWidget):
         self.vbox_all.addLayout(self.hbox_fir, 0)
         self.vbox_all.addLayout(self.hbox_sec, 0)
         self.setLayout(self.vbox_all)
-        # initialize events
-        self.init_events()
+        # set actions of the image-showing menu-button
+        menu = QMenu()
+        self.action_show_orig = QAction(Strs.get_by_enum(Strs.Loaded_Img_Widget_Action_Show_Original_Image), self)
+        self.action_show_proc = QAction(Strs.get_by_enum(Strs.Loaded_Img_Widget_Action_Show_Processed_Image), self)
+        menu.addAction(self.action_show_orig)
+        menu.addAction(self.action_show_proc)
+        self.btn_show_img.setMenu(menu)
         # register all text-related nodes to the str-enum class
         Strs.register_all(
             (self.lbl_status_title, Strs.Loaded_Img_Widget_Status_Title),
             (self.lbl_status, Strs.Status_Loading),
-            (self.btn_save_processed, Strs.Loaded_Img_Widget_Button_Save_Processed)
+            (self.btn_save_processed, Strs.Loaded_Img_Widget_Button_Save_Processed),
+            (self.action_show_orig, Strs.Loaded_Img_Widget_Action_Show_Original_Image),
+            (self.action_show_proc, Strs.Loaded_Img_Widget_Action_Show_Processed_Image)
         )
         # initially change the text-color of the lbl-status
         self.lbl_status.setStyleSheet('color: rgb{};'.format(ProcessStatus.LOADING.get_text_color()[::-1]))
+        # initialize events
+        self.init_events()
 
     # initialize events
     def init_events(self):
-        pass
-        # todo: save processed image
-        # self.btn_save.clicked.connect(lambda: print('rekk wtf'))
+        # show the original image
+        self.action_show_orig.triggered.connect(lambda: cv2.imshow('|{}|'.format(self.win_name), get_original_image(self.win_name)))
+        # show the processed image
+        self.action_show_proc.triggered.connect(lambda: cv2.imshow(self.win_name, get_processed_image(self.win_name)))
+        # save the processed image
+        self.btn_save_processed.clicked.connect(lambda: print('rekk wtf'))
 
     # notify the change of status of the image-process
     def notify_status_change(self, status):

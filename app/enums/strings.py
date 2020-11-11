@@ -8,7 +8,7 @@ _registered_dict = dict()
 
 
 # the current displaying language: 0 = chi, 1 = eng
-_cur_lang = 0
+_cur_lang = 1
 
 
 # the current font-family which depends on the language using
@@ -40,6 +40,8 @@ class Strs(Enum):
     # something related to the widget of the list of loaded-images shown in the main-window
     Loaded_Img_Widget_Status_Title = ('狀態 :', 'Status:')
     Loaded_Img_Widget_Button_Save_Processed = ('儲存處理後的圖片', 'Save the processed image')
+    Loaded_Img_Widget_Action_Show_Original_Image = ('顯示原始載入圖片', 'Show the original image')
+    Loaded_Img_Widget_Action_Show_Processed_Image = ('顯示處理後的圖片', 'Show the processed image')
 
     # something related to the statuses of image-process
     Status_Loading = ('載入或等待中', 'Loading or waiting')

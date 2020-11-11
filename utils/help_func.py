@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import cv2
+import copy
 import threading
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -157,9 +158,7 @@ def judge_avatars(detected_faces):
 
 
 # draw the boxes of the detected-and-judged faces (avatars) on the originally-loaded image
-def draw_boxes(win_name, img, judged_faces):
-    # the original image
-    orig_img = img.copy()
+def draw_boxes(win_name, img, judged_faces, orig_img=None):
     # iterate all detected-and-judged faces (avatars)
     for (_, pt_1, pt_2, judged_label) in judged_faces:
         # draw the rectangle on a single face
@@ -188,7 +187,7 @@ def do_process(win_name, img, lock, lis):
             # judge the detected faces into 2d or 3d avatars
             judged_faces = judge_avatars(detected_faces)
             # draw the boxes of detected-and-judged faces w/ the corresponding colors
-            draw_boxes(win_name, img, judged_faces)
+            draw_boxes(win_name, img, judged_faces, orig_img=cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE))
             lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.DONE)
         except BaseException:
             lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.ERROR)
