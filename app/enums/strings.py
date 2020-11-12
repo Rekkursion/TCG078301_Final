@@ -49,6 +49,10 @@ class Strs(Enum):
     Status_Done = ('處理完畢', 'Done')
     Status_Error = ('有錯誤發生', 'ERROR happened')
 
+    # the titles of file-dialogs
+    Open_File_Dialog_Title = ('選取圖片', 'Select an image')
+    Save_File_Dialog_Title = ('儲存處理後的圖片', 'Save the processed image')
+
     # get the literal string by a certain enumeration type
     @staticmethod
     def get_by_enum(str_enum):

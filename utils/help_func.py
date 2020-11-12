@@ -2,15 +2,13 @@ import tensorflow as tf
 import numpy as np
 import os
 import cv2
-import copy
 import threading
-import matplotlib.pyplot as plt
 from PIL import Image
 from random import randint
 from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
-from app.loaded_image import update_processed_image
+from app.loaded_image import add_processed_image
 from app.enums.process_status import ProcessStatus
 
 
@@ -34,23 +32,6 @@ def load_imgs_from_dir(dir_name):
         ret.append(np.asarray(img))
     # return the result-list as a numpy-array
     return np.asarray(ret)
-
-
-# show some images by matplotlib
-def show_imgs(cols, rows, img_list):
-    # the total number of to-be-shown images
-    n = cols * rows
-    # the randomly-chosen indices of to-be-shown images
-    indices = np.random.choice(img_list.shape[0], n, replace=False)
-    # build up the figure
-    fig = plt.figure(figsize=(cols * 2, rows * 2))
-    # iteratively add the sub-plot to the figure
-    for k in range(0, n):
-        img = img_list[indices[k]]
-        fig.add_subplot(rows, cols, k + 1)
-        plt.imshow(img)
-    # show the figure
-    plt.show()
 
 
 # split both classes of data into training & testing sets
@@ -168,7 +149,7 @@ def draw_boxes(win_name, img, judged_faces, orig_img=None):
     # show the boxes-drawn image
     cv2.imshow(win_name, img)
     # store the original image and the processed image
-    update_processed_image(win_name, img, orig_img=orig_img)
+    add_processed_image(win_name, img, orig_img, get_file_ext(win_name))
     # set the mouse callback to activate by-user events
     cv2.setMouseCallback(win_name, mouse_callback, (win_name,))
 
@@ -208,6 +189,24 @@ def make_sure_order_of_points(pt_1, pt_2):
             return pt_2[0], pt_1[1], pt_1[0], pt_2[1]
         else:
             return pt_2[0], pt_2[1], pt_1[0], pt_1[1]
+
+
+# get the extension of a file through its filename
+def get_file_ext(filename):
+    _, ext = os.path.splitext(filename)
+    return ext
+
+
+# replace the extension of a file w/ the designated one
+def replace_file_ext(filename, replacer_ext):
+    # the original extension which is about to be replaced
+    replacee_ext = get_file_ext(filename)
+    # if the original filename does NOT have any extension sticked to it, directly add the replacer to it
+    if replacee_ext == '':
+        return '{}.{}'.format(filename, replacer_ext)
+    # else, replace the extension
+    else:
+        return '{}{}'.format(filename[:len(filename) - len(replacee_ext)], replacer_ext)
 
 
 # initialize gpus

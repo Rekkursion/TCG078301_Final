@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QMenu, QAction
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QMenu, QAction, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
 import cv2
+from utils.help_func import replace_file_ext
 from app.enums.process_status import ProcessStatus
 from app.enums.strings import Strs
-from app.loaded_image import get_processed_image, get_original_image
+from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image
 
 
 # noinspection PyUnresolvedReferences
@@ -17,6 +18,7 @@ class LoadedImagesWidget(QWidget):
         btn_show_img
         btn_save_processed
     """
+
     def __init__(self, win_name, img, order, parent=None):
         super(LoadedImagesWidget, self).__init__(parent)
         # the window name
@@ -77,9 +79,22 @@ class LoadedImagesWidget(QWidget):
         # show the processed image
         self.action_show_proc.triggered.connect(lambda: cv2.imshow(self.win_name, get_processed_image(self.win_name)))
         # save the processed image
-        self.btn_save_processed.clicked.connect(lambda: print('rekk wtf'))
+        self.btn_save_processed.clicked.connect(self.action_save_processed_image)
 
     # notify the change of status of the image-process
     def notify_status_change(self, status):
         Strs.register(self.lbl_status, status.value)
         self.lbl_status.setStyleSheet('color: rgb{};'.format(status.get_text_color()[::-1]))
+
+    def action_save_processed_image(self):
+        # activate the save-file-dialog and get the filename and the file type selected by the user
+        filename, file_type = QFileDialog.getSaveFileName(
+            parent=self,
+            caption=Strs.get_by_enum(Strs.Save_File_Dialog_Title),
+            filter='All (*);;JPG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)'
+        )
+        # if the type is ALL, automatically determines the extension w/ the original one
+        if file_type == 'All (*)':
+            filename = replace_file_ext(filename, get_ext_of_loaded_image(self.win_name))
+        # write the image into the file w/ the designated filename
+        cv2.imwrite(filename, get_processed_image(self.win_name))
