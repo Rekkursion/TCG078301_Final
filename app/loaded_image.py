@@ -1,4 +1,5 @@
 import cv2
+from utils.configuration import configuration as cfg
 
 
 # the dictionary of all loaded images
@@ -69,3 +70,9 @@ def get_size_of_processed_image(win_name):
 # get all detected faces
 def get_detected_faces(win_name):
     return loaded_imgs[win_name].faces
+
+
+# get the number of detected faces
+def get_num_of_detected_faces(win_name):
+    faces = get_detected_faces(win_name)
+    return len(tuple(filter(lambda face: face[2] == cfg['CLS_NAMES'][0], faces))), len(tuple(filter(lambda face: face[2] == cfg['CLS_NAMES'][1], faces)))

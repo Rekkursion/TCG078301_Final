@@ -30,7 +30,7 @@ def start_framing_face_by_user(x, y):
 
 
 # finish the by-user face-framing
-def finish_framing_face_by_user(win_name, x, y):
+def finish_framing_face_by_user(win_name, x, y, widget):
     img = get_processed_image(win_name)
     if img is None:
         return
@@ -46,6 +46,8 @@ def finish_framing_face_by_user(win_name, x, y):
         judged = judge_avatars([(face, (x1, y1), (x2, y2))])
         # draw it out
         draw_boxes(win_name, img, judged)
+        # notify the number of detected faces has been updated
+        widget.notify_new_detected()
     # dispel the status of framing face
     pref[FRAMING_FACE_BY_USER] = False
     pref[FRAMING_PT_1] = None

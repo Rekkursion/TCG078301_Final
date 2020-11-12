@@ -18,7 +18,7 @@ def mouse_callback(event, x, y, flags, params):
         helper.start_framing_face_by_user(x, y)
     # a mouse-up event (right button) -> finish the face-framing
     elif event == cv2.EVENT_RBUTTONUP:
-        helper.finish_framing_face_by_user(win_name, x, y)
+        helper.finish_framing_face_by_user(win_name, x, y, widget)
     # a mouse-moving event -> frame the face
     elif event == cv2.EVENT_MOUSEMOVE:
         helper.frame_face_by_user(win_name, x, y)

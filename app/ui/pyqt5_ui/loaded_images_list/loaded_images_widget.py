@@ -1,22 +1,24 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QMenu, QAction, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
 import cv2
+from utils.configuration import configuration as cfg
 from utils.help_func import replace_file_ext, get_file_ext
 from app.enums.process_status import ProcessStatus
 from app.enums.strings import Strs
-from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image, get_size_of_processed_image
+from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image, get_size_of_processed_image, get_num_of_detected_faces
 
 
 # noinspection PyUnresolvedReferences
 class LoadedImagesWidget(QWidget):
     """
-        lbl_order
-        lbl_win_name
-        lbl_size
-        lbl_status_title
-        lbl_status
-        btn_show_img
-        btn_save_processed
+        lbl_order:              the label for displaying the opening order among all have-been-loaded images
+        lbl_win_name:           the label for displaying the (window) name of this loaded image
+        lbl_size:               the label for displaying the size of the original image
+        lbl_status_title:       the label for displaying the title of the status
+        lbl_status:             the label for displaying the current status of image-processing
+        lbl_num_of_detected:    the label for displaying the number of detected (2d/3d) faces
+        btn_show_img:           the menu-like button for showing both original & processed images
+        btn_save_processed:     the button for saving the processed image
     """
     def __init__(self, win_name, img, order, parent=None):
         super(LoadedImagesWidget, self).__init__(parent)
@@ -36,6 +38,7 @@ class LoadedImagesWidget(QWidget):
         self.hbox_sec = QHBoxLayout()
         self.lbl_status_title = QLabel()
         self.lbl_status = QLabel()
+        self.lbl_num_of_detected = QLabel()
         self.btn_show_img = QPushButton(QIcon(QPixmap('./res/img_search.png')), '')
         self.btn_show_img.setStyleSheet("""
             QPushButton {background-color: transparent;}
@@ -45,6 +48,7 @@ class LoadedImagesWidget(QWidget):
         self.btn_save_processed = QPushButton()
         self.hbox_sec.addWidget(self.lbl_status_title, 0)
         self.hbox_sec.addWidget(self.lbl_status, 0)
+        self.hbox_sec.addWidget(self.lbl_num_of_detected, 0)
         self.hbox_sec.addWidget(self.btn_show_img, 0)
         self.hbox_sec.addWidget(self.btn_save_processed, 1)
         # push both the first & the second rows into the all-hbox
@@ -92,9 +96,12 @@ class LoadedImagesWidget(QWidget):
         # enable the buttons if and only if the process is done
         self.btn_show_img.setEnabled(status == ProcessStatus.DONE)
         self.btn_save_processed.setEnabled(status == ProcessStatus.DONE)
-        # if the process is done, initially show the size of the processed image (although it's still the same as the original one)
+        # if the process is done
         if status == ProcessStatus.DONE:
+            # initially show the size of the processed image (although it's still the same as the original one)
             self.notify_size_change()
+            # show the number of detected faces, splitted into 2d & 3d
+            self.notify_new_detected()
 
     # notify the size of the processed image has been changed
     def notify_size_change(self):
@@ -103,6 +110,11 @@ class LoadedImagesWidget(QWidget):
         # re-write the text of the saving button
         Strs.register(self.btn_save_processed, Strs.Loaded_Img_Widget_Button_Save_Processed)
         self.btn_save_processed.setText('{} [{} x {}]'.format(self.btn_save_processed.text(), *new_size))
+
+    # notify the number of detected faces has been updated
+    def notify_new_detected(self):
+        num_of_2d, num_of_3d = get_num_of_detected_faces(self.win_name)
+        self.lbl_num_of_detected.setText('{}{}: {}, {}: {}{}'.format('{', cfg['CLS_NAMES'][0], num_of_2d, cfg['CLS_NAMES'][1], num_of_3d, '}'))
 
     # the action of saving the processed image
     def action_save_processed_image(self):
