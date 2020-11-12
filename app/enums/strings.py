@@ -32,6 +32,7 @@ class Strs(Enum):
     Menubar_File_Load_From_Clipboard = ('從剪貼簿', 'From clipboard')
     Menubar_File_Save = ('儲存', 'Save')
     Menubar_File_Save_All = ('儲存所有處理後的圖片到目錄', 'Save all processed images to a directory')
+    Menubar_File_Save_Selected = ('儲存目前有選定的圖片到目錄', 'Save the selected images to a directory')
 
     # something related to the url-input-dialog
     URL_Dialog_Line_Edit_Placeholder = ('在此鍵入圖片地址。', 'Enter the image URL here.')

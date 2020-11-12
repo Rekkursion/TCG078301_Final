@@ -51,7 +51,7 @@ class URLInputDialog(QDialog):
     def download_image_from_url(self, url):
         try:
             # the pre-defined temporal filename
-            filename = './res/dl_imgs/url-loaded'
+            filename = './res/dl_img/url-loaded'
             # download the file through the designated url
             urllib.request.urlretrieve(url, filename)
             # open the file as an image
