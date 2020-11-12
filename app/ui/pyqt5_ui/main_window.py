@@ -3,7 +3,10 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from PIL import ImageGrab, Image
 from threading import Thread
 import numpy as np
+import os
 import cv2
+
+from app.loaded_image import get_processed_image, get_ext_of_loaded_image
 from app.ui.pyqt5_ui.url_input_dialog import URLInputDialog
 from app.preferences.pref_helpers import get_process_lock
 from utils.help_func import do_process
@@ -17,6 +20,7 @@ class MainWindow(QMainWindow):
         action_load_from_local:     the action for loading the image from local
         action_load_from_url:       the action for loading the image from a certain url
         action_load_from_clipboard: the action for loading the image from the clipboard (only windows & macs supported)
+        action_save_all:            the action for saving all the processed images to a directory
         lis_imgs:                   the list-widget for showing all loaded/processed images
     """
     def __init__(self):
@@ -39,17 +43,17 @@ class MainWindow(QMainWindow):
             (self.menu_Load, Strs.Menubar_File_Load),
             (self.action_load_from_local, Strs.Menubar_File_Load_From_Local),
             (self.action_load_from_url, Strs.Menubar_File_Load_From_URL),
-            (self.action_load_from_clipboard, Strs.Menubar_File_Load_From_Clipboard)
+            (self.action_load_from_clipboard, Strs.Menubar_File_Load_From_Clipboard),
+            (self.menu_Save, Strs.Menubar_File_Save),
+            (self.action_save_all, Strs.Menubar_File_Save_All)
         )
 
     # initialize the events
     def init_events(self):
-        # connect the triggered-event on the action-load-from-local
         self.action_load_from_local.triggered.connect(self.action_load_from_local_triggered)
-        # connect the triggered-event on the action-load-from-url
         self.action_load_from_url.triggered.connect(self.action_load_from_url_triggered)
-        # connect the triggered-event on the action-load-from-clipboard
         self.action_load_from_clipboard.triggered.connect(self.action_load_from_clipboard_triggered)
+        self.action_save_all.triggered.connect(self.action_save_all_triggered)
 
     # start the process of detection & judgement of a certain image
     def start_process(self, win_name, img):
@@ -62,7 +66,7 @@ class MainWindow(QMainWindow):
         # open the file-dialog and get the image file(s)
         filename_list, _ = QFileDialog.getOpenFileNames(
             parent=self,
-            caption=Strs.get_by_enum(Strs.Open_File_Dialog_Title),
+            caption=Strs.get_by_enum(Strs.Open_File_Dialog_Caption),
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
         # iterate the filenames to do the processes
@@ -103,3 +107,23 @@ class MainWindow(QMainWindow):
                 elif isinstance(item, str):
                     self.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
                     self.clipboard_counter += 1
+
+    # the triggered-event for saving all processed images to a directory
+    def action_save_all_triggered(self):
+        # open the dialog to let the user select an existing directory
+        dir_name = QFileDialog.getExistingDirectory(parent=self, caption=Strs.get_by_enum(Strs.Open_Directory_Dialog_Caption))
+        # iterate all loaded images
+        if dir_name != '':
+            cnt = 0
+            for i in range(0, self.lis_imgs.count()):
+                # get its window-name of a single image as the output filename
+                win_name = self.lis_imgs.itemWidget(self.lis_imgs.item(i)).win_name
+                # determine the extension of the output filename
+                ext = get_ext_of_loaded_image(win_name)
+                if ext == '':
+                    ext = '.jpg'
+                # write it out
+                img = get_processed_image(win_name)
+                if img is not None:
+                    cnt += 1
+                    cv2.imwrite(os.path.join(dir_name, 'processed_{}{}'.format(cnt, ext)), img)

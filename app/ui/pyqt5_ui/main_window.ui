@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1023</width>
-    <height>513</height>
+    <width>1480</width>
+    <height>766</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -45,7 +45,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1023</width>
+     <width>1480</width>
      <height>24</height>
     </rect>
    </property>
@@ -71,7 +71,14 @@
      <addaction name="action_load_from_url"/>
      <addaction name="action_load_from_clipboard"/>
     </widget>
+    <widget class="QMenu" name="menu_Save">
+     <property name="title">
+      <string>儲存 Save</string>
+     </property>
+     <addaction name="action_save_all"/>
+    </widget>
     <addaction name="menu_Load"/>
+    <addaction name="menu_Save"/>
    </widget>
    <addaction name="menu_File"/>
   </widget>
@@ -115,6 +122,11 @@
     <font>
      <family>Consolas</family>
     </font>
+   </property>
+  </action>
+  <action name="action_save_all">
+   <property name="text">
+    <string>儲存所有處理後的圖片到目錄 Save all processed images to a directory</string>
    </property>
   </action>
  </widget>

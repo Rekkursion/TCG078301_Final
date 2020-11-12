@@ -30,6 +30,8 @@ class Strs(Enum):
     Menubar_File_Load_From_Local = ('從本機', 'From local')
     Menubar_File_Load_From_URL = ('從地址', 'From URL')
     Menubar_File_Load_From_Clipboard = ('從剪貼簿', 'From clipboard')
+    Menubar_File_Save = ('儲存', 'Save')
+    Menubar_File_Save_All = ('儲存所有處理後的圖片到目錄', 'Save all processed images to a directory')
 
     # something related to the url-input-dialog
     URL_Dialog_Line_Edit_Placeholder = ('在此鍵入圖片地址。', 'Enter the image URL here.')
@@ -49,9 +51,10 @@ class Strs(Enum):
     Status_Done = ('處理完畢', 'Done')
     Status_Error = ('有錯誤發生', 'ERROR happened')
 
-    # the titles of file-dialogs
-    Open_File_Dialog_Title = ('選取圖片', 'Select an image')
-    Save_File_Dialog_Title = ('儲存處理後的圖片', 'Save the processed image')
+    # the captions of file-dialogs
+    Open_File_Dialog_Caption = ('選取圖片', 'Select an image')
+    Save_File_Dialog_Caption = ('儲存處理後的圖片', 'Save the processed image')
+    Open_Directory_Dialog_Caption = ('選取目錄', 'Select a directory')
 
     # get the literal string by a certain enumeration type
     @staticmethod

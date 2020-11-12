@@ -121,7 +121,7 @@ class LoadedImagesWidget(QWidget):
         # activate the save-file-dialog and get the filename and the file type selected by the user
         filename, file_type = QFileDialog.getSaveFileName(
             parent=self,
-            caption=Strs.get_by_enum(Strs.Save_File_Dialog_Title),
+            caption=Strs.get_by_enum(Strs.Save_File_Dialog_Caption),
             filter='All (*);;JPG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)'
         )
         # make sure the filename is NOT empty (the user clicked the 'save' button in the file-dialog)
