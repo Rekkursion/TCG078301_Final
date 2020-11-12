@@ -24,3 +24,12 @@ class LoadedImagesListWidget(QListWidget):
             if widget.win_name == win_name:
                 return widget
         return None
+
+    # deduplicate the window-name by adding a number before the original name
+    def deduplicate_win_name(self, win_name):
+        new_win_name = win_name
+        counter = 1
+        while self.get_widget_by_win_name(new_win_name) is not None:
+            counter += 1
+            new_win_name = '({}) {}'.format(counter, win_name)
+        return new_win_name
