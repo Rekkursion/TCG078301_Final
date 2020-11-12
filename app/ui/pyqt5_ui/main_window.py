@@ -59,13 +59,15 @@ class MainWindow(QMainWindow):
 
     # the triggered-event of the action-load-from-local
     def action_load_from_local_triggered(self):
-        # open the file-dialog and get the designated image file
-        filename, _ = QFileDialog.getOpenFileName(
+        # open the file-dialog and get the image file(s)
+        filename_list, _ = QFileDialog.getOpenFileNames(
             parent=self,
             caption=Strs.get_by_enum(Strs.Open_File_Dialog_Title),
             filter='Image Files (*.jpg *.jpeg *.png *bmp)'
         )
-        self.start_process(filename[:cfg['MAX_LEN_OF_WIN_NAME']], cv2.imread(filename, cv2.IMREAD_COLOR))
+        # iterate the filenames to do the processes
+        for filename in filename_list:
+            self.start_process(filename[:cfg['MAX_LEN_OF_WIN_NAME']], cv2.imread(filename, cv2.IMREAD_COLOR))
 
     # the triggered-event of the action-load-from-url
     def action_load_from_url_triggered(self):
