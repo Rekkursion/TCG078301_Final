@@ -59,6 +59,9 @@ class LoadedImagesWidget(QWidget):
         menu.addAction(self.action_show_orig)
         menu.addAction(self.action_show_proc)
         self.btn_show_img.setMenu(menu)
+        # disable all buttons from the beginning (they will be enabled until its process is done)
+        self.btn_show_img.setDisabled(True)
+        self.btn_save_processed.setDisabled(True)
         # register all text-related nodes to the str-enum class
         Strs.register_all(
             (self.lbl_status_title, Strs.Loaded_Img_Widget_Status_Title),
@@ -83,8 +86,13 @@ class LoadedImagesWidget(QWidget):
 
     # notify the change of status of the image-process
     def notify_status_change(self, status):
+        # replace the text by registering the status-showing label
         Strs.register(self.lbl_status, status.value)
+        # change the text-color according to the status
         self.lbl_status.setStyleSheet('color: rgb{};'.format(status.get_text_color()[::-1]))
+        # enable the buttons if and only if the process is done
+        self.btn_show_img.setEnabled(status == ProcessStatus.DONE)
+        self.btn_save_processed.setEnabled(status == ProcessStatus.DONE)
 
     # the action of saving the processed image
     def action_save_processed_image(self):
