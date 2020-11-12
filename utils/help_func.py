@@ -8,7 +8,7 @@ from random import randint
 from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
-from app.loaded_image import add_processed_image, update_processed_image
+from app.loaded_image import add_detected_face, add_processed_image, update_processed_image, get_original_image, get_detected_faces
 from app.enums.process_status import ProcessStatus
 
 
@@ -128,9 +128,8 @@ def judge_avatars(detected_faces):
         for (face, pt_1, pt_2) in detected_faces:
             # do the prediction on a single detected face
             pred = rekk.do_prediction(face)
-            # add the prediction into the result-list
+            # add the prediction into the result-list and loaded-image-dict
             ret.append((face, pt_1, pt_2, pred))
-            # print(pred)
     else:
         # todo: exception handling
         print('wtf')
@@ -140,20 +139,29 @@ def judge_avatars(detected_faces):
 
 # draw the boxes of the detected-and-judged faces (avatars) on the originally-loaded image
 def draw_boxes(win_name, img, judged_faces, orig_img=None):
-    # iterate all detected-and-judged faces (avatars)
-    for (_, pt_1, pt_2, judged_label) in judged_faces:
-        # draw the rectangle on a single face
-        cv2.rectangle(img, pt_1, pt_2, cfg['BOX_CLRS'][judged_label], 2)
-        # put the judged label on the corresponding face
-        cv2.putText(img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
-    # show the boxes-drawn image
-    cv2.imshow(win_name, img)
-    # update the processed image
-    if orig_img is None:
-        update_processed_image(win_name, img)
-    # store the original image and the processed image
-    else:
+    # store the original image and the processed image if it's the first time
+    if orig_img is not None:
         add_processed_image(win_name, img, orig_img, get_file_ext(win_name))
+    # copy an original image out to be modified
+    orig_img = cv2.copyMakeBorder(get_original_image(win_name), 0, 0, 0, 0, cv2.BORDER_REPLICATE)
+    # resize the copied original image into the shape of the passed image
+    new_img = cv2.resize(orig_img, (img.shape[1], img.shape[0]), interpolation=cv2.INTER_CUBIC)
+    # add the detected face into the loaded-image-dictionary
+    for (_, pt_1, pt_2, judged_label) in judged_faces:
+        reversed_factor = orig_img.shape[0] / new_img.shape[0]
+        add_detected_face(win_name, (int(pt_1[0] * reversed_factor), int(pt_1[1] * reversed_factor)), (int(pt_2[0] * reversed_factor), int(pt_2[1] * reversed_factor)), judged_label)
+    # calculate the scaling-factor
+    scaling_factor = new_img.shape[0] / orig_img.shape[0]
+    # iterate all detected-and-judged faces (avatars)
+    for (pt_1, pt_2, judged_label) in get_detected_faces(win_name):
+        # draw the rectangle on a single face
+        cv2.rectangle(new_img, (int(pt_1[0] * scaling_factor), int(pt_1[1] * scaling_factor)), (int(pt_2[0] * scaling_factor), int(pt_2[1] * scaling_factor)), cfg['BOX_CLRS'][judged_label], 2)
+        # put the judged label on the corresponding face
+        cv2.putText(new_img, judged_label, (int(pt_1[0] * scaling_factor), int((pt_1[1] - 4) * scaling_factor)), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
+    # show the boxes-drawn image
+    cv2.imshow(win_name, new_img)
+    # update the processed image
+    update_processed_image(win_name, new_img)
     # set the mouse callback to activate by-user events
     cv2.setMouseCallback(win_name, mouse_callback, (win_name,))
 
@@ -166,14 +174,16 @@ def do_process(win_name, img, lock, lis):
     with lock:
         # noinspection PyBroadException
         try:
+            # the widget of the list
+            widget = lis.get_widget_by_win_name(win_name)
             # detect faces and face-boxes of the original image by retinaface
-            lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.PROCESSING)
+            widget.notify_status_change(ProcessStatus.PROCESSING)
             detected_faces = detect_faces(img)
             # judge the detected faces into 2d or 3d avatars
             judged_faces = judge_avatars(detected_faces)
             # draw the boxes of detected-and-judged faces w/ the corresponding colors
             draw_boxes(win_name, img, judged_faces, orig_img=cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE))
-            lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.DONE)
+            widget.notify_status_change(ProcessStatus.DONE)
         except BaseException:
             lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.ERROR)
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing

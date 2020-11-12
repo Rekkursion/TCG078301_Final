@@ -5,7 +5,7 @@ from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
 from utils.help_func import judge_avatars, draw_boxes, make_sure_order_of_points
 from app.preferences.pref import *
-from app.loaded_image import get_processed_image, update_processed_image
+from app.loaded_image import get_processed_image, get_original_image, update_processed_image
 
 
 # get the pre-trained rekk-model
@@ -100,14 +100,19 @@ def resize_cv_window(win_name, scaling_factor):
     if is_framing_face_by_user():
         return
     # get the processed image by the window name
-    img = get_processed_image(win_name)
-    if img is None:
+    cur_img = get_processed_image(win_name)
+    # get the original image by the window name
+    orig_img = get_original_image(win_name)
+    if cur_img is None or orig_img is None:
         return
     # calculate the new size
-    new_size = (int(img.shape[1] * scaling_factor), int(img.shape[0] * scaling_factor))
+    new_size = (int(cur_img.shape[1] * scaling_factor), int(cur_img.shape[0] * scaling_factor))
     # actually re-size the opencv-window
-    img = cv2.resize(img, new_size, interpolation=cv2.INTER_CUBIC)
+    img = cv2.resize(orig_img, new_size, interpolation=cv2.INTER_CUBIC)
+    # draw the boxes on the resized original image
+    draw_boxes(win_name, img, [])
+
     # re-show the resized/reset'd image
-    cv2.imshow(win_name, img)
+    # cv2.imshow(win_name, img)
     # store the processed image back
-    update_processed_image(win_name, img)
+    # update_processed_image(win_name, img)
