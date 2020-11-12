@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QMenu, QAction, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
 import cv2
-from utils.help_func import replace_file_ext
+from utils.help_func import replace_file_ext, get_file_ext
 from app.enums.process_status import ProcessStatus
 from app.enums.strings import Strs
 from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image
@@ -86,6 +86,7 @@ class LoadedImagesWidget(QWidget):
         Strs.register(self.lbl_status, status.value)
         self.lbl_status.setStyleSheet('color: rgb{};'.format(status.get_text_color()[::-1]))
 
+    # the action of saving the processed image
     def action_save_processed_image(self):
         # activate the save-file-dialog and get the filename and the file type selected by the user
         filename, file_type = QFileDialog.getSaveFileName(
@@ -93,8 +94,10 @@ class LoadedImagesWidget(QWidget):
             caption=Strs.get_by_enum(Strs.Save_File_Dialog_Title),
             filter='All (*);;JPG (*.jpg *.jpeg);;PNG (*.png);;BMP (*.bmp)'
         )
-        # if the type is ALL, automatically determines the extension w/ the original one
-        if file_type == 'All (*)':
-            filename = replace_file_ext(filename, get_ext_of_loaded_image(self.win_name))
-        # write the image into the file w/ the designated filename
-        cv2.imwrite(filename, get_processed_image(self.win_name))
+        # make sure the filename is NOT empty (the user clicked the 'save' button in the file-dialog)
+        if filename != '':
+            # if the type is ALL, automatically determines the extension w/ the original one
+            if file_type == 'All (*)' and get_file_ext(filename) == '':
+                filename = replace_file_ext(filename, get_ext_of_loaded_image(self.win_name))
+            # write the image into the file w/ the designated filename
+            cv2.imwrite(filename, get_processed_image(self.win_name))

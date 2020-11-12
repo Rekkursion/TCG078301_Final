@@ -8,7 +8,7 @@ from random import randint
 from utils.configuration import configuration as cfg
 from app.preferences import pref_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
-from app.loaded_image import add_processed_image
+from app.loaded_image import add_processed_image, update_processed_image
 from app.enums.process_status import ProcessStatus
 
 
@@ -148,8 +148,12 @@ def draw_boxes(win_name, img, judged_faces, orig_img=None):
         cv2.putText(img, judged_label, (pt_1[0], pt_1[1] - 4), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
     # show the boxes-drawn image
     cv2.imshow(win_name, img)
+    # update the processed image
+    if orig_img is None:
+        update_processed_image(win_name, img)
     # store the original image and the processed image
-    add_processed_image(win_name, img, orig_img, get_file_ext(win_name))
+    else:
+        add_processed_image(win_name, img, orig_img, get_file_ext(win_name))
     # set the mouse callback to activate by-user events
     cv2.setMouseCallback(win_name, mouse_callback, (win_name,))
 
