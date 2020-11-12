@@ -54,8 +54,8 @@ class MainWindow(QMainWindow):
     # start the process of detection & judgement of a certain image
     def start_process(self, win_name, img):
         if self.lis_imgs.get_widget_by_win_name(win_name) is None:
-            self.lis_imgs.push_back(win_name, img)
-            Thread(target=do_process, name=win_name, daemon=True, args=(win_name, img, get_process_lock(), self.lis_imgs,)).start()
+            widget = self.lis_imgs.push_back(win_name, img)
+            Thread(target=do_process, name=win_name, daemon=True, args=(win_name, img, get_process_lock(), widget,)).start()
 
     # the triggered-event of the action-load-from-local
     def action_load_from_local_triggered(self):

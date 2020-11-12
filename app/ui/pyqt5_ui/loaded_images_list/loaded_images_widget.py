@@ -4,7 +4,7 @@ import cv2
 from utils.help_func import replace_file_ext, get_file_ext
 from app.enums.process_status import ProcessStatus
 from app.enums.strings import Strs
-from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image
+from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image, get_size_of_processed_image
 
 
 # noinspection PyUnresolvedReferences
@@ -18,7 +18,6 @@ class LoadedImagesWidget(QWidget):
         btn_show_img
         btn_save_processed
     """
-
     def __init__(self, win_name, img, order, parent=None):
         super(LoadedImagesWidget, self).__init__(parent)
         # the window name
@@ -84,7 +83,7 @@ class LoadedImagesWidget(QWidget):
         # save the processed image
         self.btn_save_processed.clicked.connect(self.action_save_processed_image)
 
-    # notify the change of status of the image-process
+    # notify the status of the image-process has been changed
     def notify_status_change(self, status):
         # replace the text by registering the status-showing label
         Strs.register(self.lbl_status, status.value)
@@ -93,6 +92,17 @@ class LoadedImagesWidget(QWidget):
         # enable the buttons if and only if the process is done
         self.btn_show_img.setEnabled(status == ProcessStatus.DONE)
         self.btn_save_processed.setEnabled(status == ProcessStatus.DONE)
+        # if the process is done, initially show the size of the processed image (although it's still the same as the original one)
+        if status == ProcessStatus.DONE:
+            self.notify_size_change()
+
+    # notify the size of the processed image has been changed
+    def notify_size_change(self):
+        # get the new size of the processed image
+        new_size = get_size_of_processed_image(self.win_name)
+        # re-write the text of the saving button
+        Strs.register(self.btn_save_processed, Strs.Loaded_Img_Widget_Button_Save_Processed)
+        self.btn_save_processed.setText('{} [{} x {}]'.format(self.btn_save_processed.text(), *new_size))
 
     # the action of saving the processed image
     def action_save_processed_image(self):

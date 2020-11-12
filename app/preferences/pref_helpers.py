@@ -92,27 +92,3 @@ def load_pretrained_models():
     # load the pre-trained retinaface from insightface which is used to detect the faces from an image
     pref[RETINAFACE_MODEL] = insightface.model_zoo.get_model('retinaface_r50_v1')
     pref[RETINAFACE_MODEL].prepare(ctx_id=-1, nms=0.4)
-
-
-# adjust the size of a certain opencv-window
-def resize_cv_window(win_name, scaling_factor):
-    # the wheeling event could only be invoked when the user is NOT framing the face
-    if is_framing_face_by_user():
-        return
-    # get the processed image by the window name
-    cur_img = get_processed_image(win_name)
-    # get the original image by the window name
-    orig_img = get_original_image(win_name)
-    if cur_img is None or orig_img is None:
-        return
-    # calculate the new size
-    new_size = (int(cur_img.shape[1] * scaling_factor), int(cur_img.shape[0] * scaling_factor))
-    # actually re-size the opencv-window
-    img = cv2.resize(orig_img, new_size, interpolation=cv2.INTER_CUBIC)
-    # draw the boxes on the resized original image
-    draw_boxes(win_name, img, [])
-
-    # re-show the resized/reset'd image
-    # cv2.imshow(win_name, img)
-    # store the processed image back
-    # update_processed_image(win_name, img)

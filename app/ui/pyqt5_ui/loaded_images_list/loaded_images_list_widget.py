@@ -16,6 +16,7 @@ class LoadedImagesListWidget(QListWidget):
             item.setSizeHint(widget.sizeHint())
             self.addItem(item)
             self.setItemWidget(item, widget)
+            return widget
 
     # get the designated widget by the corresponding window name
     def get_widget_by_win_name(self, win_name):

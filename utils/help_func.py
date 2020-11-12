@@ -138,7 +138,7 @@ def judge_avatars(detected_faces):
 
 
 # draw the boxes of the detected-and-judged faces (avatars) on the originally-loaded image
-def draw_boxes(win_name, img, judged_faces, orig_img=None):
+def draw_boxes(win_name, img, judged_faces=(), orig_img=None):
     # store the original image and the processed image if it's the first time
     if orig_img is not None:
         add_processed_image(win_name, img, orig_img, get_file_ext(win_name))
@@ -162,20 +162,16 @@ def draw_boxes(win_name, img, judged_faces, orig_img=None):
     cv2.imshow(win_name, new_img)
     # update the processed image
     update_processed_image(win_name, new_img)
-    # set the mouse callback to activate by-user events
-    cv2.setMouseCallback(win_name, mouse_callback, (win_name,))
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
-def do_process(win_name, img, lock, lis):
+def do_process(win_name, img, lock, widget):
     if img is None:
         return
     # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
     with lock:
         # noinspection PyBroadException
         try:
-            # the widget of the list
-            widget = lis.get_widget_by_win_name(win_name)
             # detect faces and face-boxes of the original image by retinaface
             widget.notify_status_change(ProcessStatus.PROCESSING)
             detected_faces = detect_faces(img)
@@ -184,8 +180,10 @@ def do_process(win_name, img, lock, lis):
             # draw the boxes of detected-and-judged faces w/ the corresponding colors
             draw_boxes(win_name, img, judged_faces, orig_img=cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE))
             widget.notify_status_change(ProcessStatus.DONE)
+            # set the mouse callback to activate by-user events
+            cv2.setMouseCallback(win_name, mouse_callback, (win_name, widget,))
         except BaseException:
-            lis.get_widget_by_win_name(win_name).notify_status_change(ProcessStatus.ERROR)
+            widget.notify_status_change(ProcessStatus.ERROR)
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing
     if threading.current_thread() is not threading.main_thread():
         cv2.waitKey(0)

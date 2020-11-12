@@ -60,6 +60,12 @@ def get_original_image(win_name):
         return None
 
 
+# get the current size of the processed image
+def get_size_of_processed_image(win_name):
+    img = get_processed_image(win_name)
+    return img.shape[1], img.shape[0]
+
+
 # get all detected faces
 def get_detected_faces(win_name):
     return loaded_imgs[win_name].faces
