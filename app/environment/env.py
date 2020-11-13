@@ -1,6 +1,6 @@
 from threading import Lock
 
-pref = {
+env_dict = {
     # the pre-trained rekk-model (used to judge a face image is a 2D or a 3D avatar)
     'REKK_MODEL': None,
 

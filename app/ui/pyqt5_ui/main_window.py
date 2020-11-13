@@ -7,7 +7,7 @@ import os
 import cv2
 from app.loaded_image import get_processed_image, get_ext_of_loaded_image
 from app.ui.pyqt5_ui.url_input_dialog import URLInputDialog
-from app.preferences.pref_helpers import get_process_lock
+from app.environment.env_helpers import get_process_lock
 from utils.help_func import do_process
 from utils.configuration import configuration as cfg
 from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
