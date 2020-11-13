@@ -6,6 +6,7 @@ import numpy as np
 import os
 import cv2
 from app.loaded_image import get_processed_image, get_ext_of_loaded_image
+from app.preferences.pref_manager import PrefManager
 from app.ui.pyqt5_ui.url_input_dialog import URLInputDialog
 from app.environment.env_helpers import get_process_lock
 from utils.help_func import do_process
@@ -21,6 +22,8 @@ class MainWindow(QMainWindow):
         action_load_from_clipboard: the action for loading the image from the clipboard (only windows & macs supported)
         action_save_all:            the action for saving all the processed images to a directory
         action_save_selected:       the action for saving the selected images to a directory
+        action_lang_chi:            the action for switching the language into chinese
+        action_lang_eng:            the action for switching the language into english
         lis_imgs:                   the list-widget for showing all loaded/processed images
     """
     def __init__(self):
@@ -47,7 +50,9 @@ class MainWindow(QMainWindow):
             (self.action_load_from_clipboard, Strs.Menubar_File_Load_From_Clipboard),
             (self.menu_Save, Strs.Menubar_File_Save),
             (self.action_save_all, Strs.Menubar_File_Save_All),
-            (self.action_save_selected, Strs.Menubar_File_Save_Selected)
+            (self.action_save_selected, Strs.Menubar_File_Save_Selected),
+            (self.menu_preferences, Strs.Menubar_Pref),
+            (self.menu_lang, Strs.Menubar_Pref_Lang)
         )
 
     # initialize the events
@@ -57,6 +62,8 @@ class MainWindow(QMainWindow):
         self.action_load_from_clipboard.triggered.connect(self.action_load_from_clipboard_triggered)
         self.action_save_all.triggered.connect(self.action_save_all_triggered)
         self.action_save_selected.triggered.connect(self.action_save_selected_triggered)
+        self.action_lang_chi.triggered.connect(self.action_lang_chi_triggered)
+        self.action_lang_eng.triggered.connect(self.action_lang_eng_triggered)
 
     # start the process of detection & judgement of a certain image
     def start_process(self, win_name, img):
@@ -151,3 +158,15 @@ class MainWindow(QMainWindow):
                 if img is not None:
                     cnt += 1
                     cv2.imwrite(os.path.join(dir_name, 'processed_{}{}'.format(cnt, ext)), img)
+
+    # the triggered-event for switching the language into chinese
+    @staticmethod
+    def action_lang_chi_triggered():
+        PrefManager.set_pref('lang', 0)
+        Strs.notify_all_registered()
+
+    # the triggered-event for switching the language into english
+    @staticmethod
+    def action_lang_eng_triggered():
+        PrefManager.set_pref('lang', 1)
+        Strs.notify_all_registered()

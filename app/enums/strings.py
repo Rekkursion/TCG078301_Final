@@ -1,14 +1,11 @@
 from enum import Enum
 from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QMenu, QAction, QLineEdit, QDialog
 from PyQt5.QtGui import QFont
+from app.preferences.pref_manager import PrefManager
 
 
 # the dictionary to contain all registered nodes (components)
 _registered_dict = dict()
-
-
-# the current displaying language: 0 = chi, 1 = eng
-_cur_lang = 1
 
 
 # the current font-family which depends on the language using
@@ -33,6 +30,8 @@ class Strs(Enum):
     Menubar_File_Save = ('儲存', 'Save')
     Menubar_File_Save_All = ('儲存所有處理後的圖片到目錄', 'Save all processed images to a directory')
     Menubar_File_Save_Selected = ('儲存目前有選定的圖片到目錄', 'Save the selected images to a directory')
+    Menubar_Pref = ('設定', 'Preferences')
+    Menubar_Pref_Lang = ('介面語言', 'Interface language')
 
     # something related to the url-input-dialog
     URL_Dialog_Line_Edit_Placeholder = ('在此鍵入圖片地址。', 'Enter the image URL here.')
@@ -61,7 +60,7 @@ class Strs(Enum):
     @staticmethod
     def get_by_enum(str_enum):
         if isinstance(str_enum, Strs):
-            return str_enum.value[_cur_lang]
+            return str_enum.value[PrefManager.get_pref('lang')]
         return str_enum
 
     # register a single node
@@ -99,7 +98,7 @@ class Strs(Enum):
             # get the literal string by the passed-in str-enum
             literal_str = Strs.get_by_enum(_registered_dict[node])
             # set the font-family according to the language chosen
-            node.setFont(QFont(_font_families[_cur_lang], _font_size))
+            node.setFont(QFont(_font_families[PrefManager.get_pref('lang')], _font_size))
 
             # a q-label, q-push-button, q-action -> set its text
             if isinstance(node, (QLabel, QPushButton, QAction)):

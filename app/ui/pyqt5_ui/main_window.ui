@@ -81,7 +81,21 @@
     <addaction name="menu_Load"/>
     <addaction name="menu_Save"/>
    </widget>
+   <widget class="QMenu" name="menu_preferences">
+    <property name="title">
+     <string>設定 Preferences</string>
+    </property>
+    <widget class="QMenu" name="menu_lang">
+     <property name="title">
+      <string>介面語言 Interface language</string>
+     </property>
+     <addaction name="action_lang_chi"/>
+     <addaction name="action_lang_eng"/>
+    </widget>
+    <addaction name="menu_lang"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_preferences"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="font">
@@ -133,6 +147,25 @@
   <action name="action_save_selected">
    <property name="text">
     <string>儲存目前有選定的圖片到目錄 Save the selected images to a directory</string>
+   </property>
+  </action>
+  <action name="action_lang_chi">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>中文</string>
+   </property>
+  </action>
+  <action name="action_lang_eng">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>English</string>
    </property>
   </action>
  </widget>
