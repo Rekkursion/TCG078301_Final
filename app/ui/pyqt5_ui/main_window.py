@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
         self.init_events()
         # the counter for counting the number of opened images through the clipboard
         self.clipboard_counter = 0
-        self.lis_imgs.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.lis_imgs.setSelectionMode(QAbstractItemView.ExtendedSelection)
         # register all text-related nodes to the str-enum class
         Strs.register_all(
             (self, Strs.Main_Window_Title),
