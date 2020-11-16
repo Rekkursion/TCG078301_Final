@@ -5,10 +5,11 @@ import cv2
 import threading
 from PIL import Image
 from random import randint
+from app.enums.colors import Colors
 from utils.configuration import configuration as cfg
 from app.environment import env_helpers as helper
 from app.ui.cv2_ui.callbacks import mouse_callback
-from app.loaded_image import add_detected_face, add_processed_image, update_processed_image, get_original_image, get_detected_faces
+from app.loaded_image import add_detected_face, add_processed_image, update_processed_image, get_original_image, get_detected_faces, get_num_of_detected_faces
 from app.enums.process_status import ProcessStatus
 
 
@@ -154,10 +155,11 @@ def draw_boxes(win_name, img, judged_faces=(), orig_img=None):
     scaling_factor = new_img.shape[0] / orig_img.shape[0]
     # iterate all detected-and-judged faces (avatars)
     for (pt_1, pt_2, judged_label) in get_detected_faces(win_name):
+        clr = Colors.FACE_2D_BOX if judged_label == cfg['CLS_NAMES'][0] else Colors.FACE_3D_BOX
         # draw the rectangle on a single face
-        cv2.rectangle(new_img, (int(pt_1[0] * scaling_factor), int(pt_1[1] * scaling_factor)), (int(pt_2[0] * scaling_factor), int(pt_2[1] * scaling_factor)), cfg['BOX_CLRS'][judged_label], 2)
+        cv2.rectangle(new_img, (int(pt_1[0] * scaling_factor), int(pt_1[1] * scaling_factor)), (int(pt_2[0] * scaling_factor), int(pt_2[1] * scaling_factor)), clr, 2)
         # put the judged label on the corresponding face
-        cv2.putText(new_img, judged_label, (int(pt_1[0] * scaling_factor), int((pt_1[1] - 4) * scaling_factor)), cv2.FONT_HERSHEY_PLAIN, 1, cfg['BOX_CLRS'][judged_label], 2)
+        cv2.putText(new_img, judged_label, (int(pt_1[0] * scaling_factor), int((pt_1[1] - 4) * scaling_factor)), cv2.FONT_HERSHEY_PLAIN, 1, clr, 2)
     # show the boxes-drawn image
     cv2.imshow(win_name, new_img)
     # update the processed image
@@ -165,7 +167,7 @@ def draw_boxes(win_name, img, judged_faces=(), orig_img=None):
 
 
 # do the process of judging the faces on an image are 2D or 3D respectively
-def do_process(win_name, img, lock, widget):
+def do_process(win_name, img, lock, widget, log_writer):
     if img is None:
         return
     # acquire the lock to avoid race-condition and release it after finishing the task (before the key-waiting)
@@ -174,16 +176,19 @@ def do_process(win_name, img, lock, widget):
         try:
             # detect faces and face-boxes of the original image by retinaface
             widget.notify_status_change(ProcessStatus.PROCESSING)
+            log_writer('The image <i>{}</i> has been loaded.'.format(win_name), Colors.LOG_GENERAL)
             detected_faces = detect_faces(img)
             # judge the detected faces into 2d or 3d avatars
             judged_faces = judge_avatars(detected_faces)
             # draw the boxes of detected-and-judged faces w/ the corresponding colors
             draw_boxes(win_name, img, judged_faces, orig_img=cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE))
             widget.notify_status_change(ProcessStatus.DONE)
+            log_writer('The process of the loaded image <i>{}</i> is done: <b>{}</b> 2D & <b>{}</b> 3D faces detected.'.format(win_name, *get_num_of_detected_faces(win_name)), Colors.LOG_GENERAL)
             # set the mouse callback to activate by-user events
             cv2.setMouseCallback(win_name, mouse_callback, (win_name, widget,))
         except BaseException:
             widget.notify_status_change(ProcessStatus.ERROR)
+            log_writer('Error happened when the program processes the loaded image <i>{}</i>.'.format(win_name), Colors.LOG_ERROR)
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing
     if threading.current_thread() is not threading.main_thread():
         cv2.waitKey(0)

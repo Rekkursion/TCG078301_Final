@@ -20,7 +20,7 @@ class URLInputDialog(QDialog):
     def __init__(self):
         super(URLInputDialog, self).__init__()
         # load the UI
-        uic.loadUi('./ui/pyqt5_ui/url_input_dialog.ui', self)
+        uic.loadUi('./ui/pyqt5_ui/url_input_dialog/url_input_dialog.ui', self)
         # initialize the events
         self.init_events()
         # force this dialog being the top form

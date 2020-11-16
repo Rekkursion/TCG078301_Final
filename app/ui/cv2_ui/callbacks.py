@@ -1,5 +1,4 @@
 import cv2
-
 from app.loaded_image import get_processed_image, get_original_image
 from utils.configuration import configuration as cfg
 from app.environment import env_helpers as helper

@@ -1,6 +1,7 @@
 import cv2
 import insightface
 import numpy as np
+from app.enums.colors import Colors
 from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
 from utils.help_func import judge_avatars, draw_boxes, make_sure_order_of_points
@@ -71,10 +72,10 @@ def frame_face_by_user(win_name, x, y):
             copied = cv2.copyMakeBorder(new_img, 0, 0, 0, 0, cv2.BORDER_REPLICATE)
             # draw the user-framing rectangle (semi-transparent filled)
             filled_rect = np.zeros(new_img.shape, np.uint8)
-            cv2.rectangle(filled_rect, (x, y), env_dict[FRAMING_PT_1], (202, 91, 111), -1)
+            cv2.rectangle(filled_rect, (x, y), env_dict[FRAMING_PT_1], Colors.USER_FRAMING_BOX, -1)
             copied = cv2.addWeighted(copied, 0.5, filled_rect, 0.5, 1)
             # draw the user-framing rectangle (border)
-            cv2.rectangle(copied, (x, y), env_dict[FRAMING_PT_1], (202, 91, 111), 2)
+            cv2.rectangle(copied, (x, y), env_dict[FRAMING_PT_1], Colors.USER_FRAMING_BOX, 2)
             # show the boxes-drawn image
             cv2.imshow(win_name, copied)
             # re-zero the sampling counter

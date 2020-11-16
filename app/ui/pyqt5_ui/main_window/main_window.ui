@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1169</width>
-    <height>693</height>
+    <width>1405</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,6 +38,9 @@
     <property name="bottomMargin">
      <number>12</number>
     </property>
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="main_layout"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -45,7 +48,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1169</width>
+     <width>1405</width>
      <height>24</height>
     </rect>
    </property>
