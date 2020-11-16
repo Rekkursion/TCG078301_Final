@@ -160,13 +160,15 @@ class MainWindow(QMainWindow):
                     cv2.imwrite(os.path.join(dir_name, 'processed_{}{}'.format(cnt, ext)), img)
 
     # the triggered-event for switching the language into chinese
-    @staticmethod
-    def action_lang_chi_triggered():
+    def action_lang_chi_triggered(self):
         PrefManager.set_pref('lang', 0)
         Strs.notify_all_registered()
+        self.action_lang_chi.setChecked(True)
+        self.action_lang_eng.setChecked(False)
 
     # the triggered-event for switching the language into english
-    @staticmethod
-    def action_lang_eng_triggered():
+    def action_lang_eng_triggered(self):
         PrefManager.set_pref('lang', 1)
         Strs.notify_all_registered()
+        self.action_lang_chi.setChecked(False)
+        self.action_lang_eng.setChecked(True)
