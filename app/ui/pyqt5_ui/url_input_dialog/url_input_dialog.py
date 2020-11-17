@@ -27,6 +27,8 @@ class URLInputDialog(QDialog):
         self.setWindowModality(Qt.ApplicationModal)
         # the loaded image if any
         self.loaded_img = None
+        # the error messsage if needs
+        self.err_msg = ''
         # register all text-related nodes to the str-enum class
         Strs.register_all(
             (self, Strs.URL_Input_Dialog_Title),
@@ -61,14 +63,13 @@ class URLInputDialog(QDialog):
                 raise UnidentifiedImageError
             # set the image as the loaded one
             self.loaded_img = np.asarray(img)
+            # self.write_log('The image <u>{}</u> has been loaded <i>from local</i>.'.format(filename), Colors.LOG_LOAD_IMAGE)
         # some possible errors due to the network-related things (url, socket, http, etc.)
         except (socket.error, urllib.error.URLError, urllib.error.HTTPError, urllib.error.ContentTooShortError):
-            # todo
-            print('Image downloading failed.')
+            self.err_msg = 'Image downloading failed.'
         # some possible errors since the loaded image may be with an unknown or unsupported format/content
         except (ValueError, UnidentifiedImageError, OSError):
-            # todo
-            print('Unknown image file. Please aware that GIF files are NOT supported.')
+            self.err_msg = 'Unknown image file. Please aware that GIF files are NOT supported.'
 
     # get the user-entered url
     def get_url(self):
@@ -77,3 +78,7 @@ class URLInputDialog(QDialog):
     # get the loaded image if any
     def get_loaded_image(self):
         return self.loaded_img
+
+    # get the error message if some error happened, or it will return an empty string
+    def get_err_msg(self):
+        return self.err_msg

@@ -3,3 +3,4 @@ pretrained_model/
 __pycache__/
 .idea/
 app/res/todo
+app/res/dl_img/url-loaded

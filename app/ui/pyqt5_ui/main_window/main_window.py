@@ -1,12 +1,13 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QAbstractItemView, QTextBrowser
+from PyQt5.QtWidgets import QMainWindow, QAbstractItemView
 from PyQt5.QtGui import QFont
 from threading import Thread
 from app.environment.env_helpers import get_process_lock
-from utils.help_func import do_process
+from app.ui.pyqt5_ui.log_area import LogArea
 from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
 from app.ui.pyqt5_ui.main_window.main_window_actions import *
 from app.enums.strings import Strs
+from utils.help_func import do_process
 
 
 class MainWindow(QMainWindow):
@@ -30,8 +31,8 @@ class MainWindow(QMainWindow):
         self.lis_imgs = LoadedImagesListWidget()
         self.main_layout.addWidget(self.lis_imgs)
         # the text-browser for showing logs
-        self.log_area = QTextBrowser()
-        self.log_area.setFont(QFont('Consolas', 9))
+        self.log_area = LogArea()
+        self.log_area.setFont(QFont('Consolas', 10))
         self.log_area.setFixedHeight(160)
         self.main_layout.addWidget(self.log_area)
         # initialize the events
@@ -72,6 +73,8 @@ class MainWindow(QMainWindow):
                args=(win_name, img, get_process_lock(), widget, self.write_log)).start()
 
     # write a single log and the text-color at the log-area (text-browser)
-    def write_log(self, text, color, is_bold=False):
-        log = '<span style="color: rgb{};">{}</span>'.format(str(color), '<strong>{}</strong>'.format(text) if is_bold else text)
+    def write_log(self, text, color):
+        log = '<span style="color: rgb{};">{}</span>'.format(str(color), '<strong>{}</strong>'.format(text))
         self.log_area.append(log)
+        # to keep the text-browser always at the bottom
+        # self.log_area.moveCursor(self.log_area.textCursor().End)

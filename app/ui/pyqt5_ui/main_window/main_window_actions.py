@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QFileDialog
 import numpy as np
 import cv2
 import os
+from app.enums.colors import Colors
 from app.enums.strings import Strs
 from app.loaded_image import get_ext_of_loaded_image, get_processed_image
 from app.preferences.pref_manager import PrefManager
@@ -21,7 +22,9 @@ def action_load_from_local_triggered(self):
         )
         # iterate the filenames to do the processes
         for filename in filename_list:
-            self.start_process(filename[:cfg['MAX_LEN_OF_WIN_NAME']], cv2.imread(filename, cv2.IMREAD_COLOR))
+            name = filename[:cfg['MAX_LEN_OF_WIN_NAME']]
+            self.start_process(name, cv2.imread(filename, cv2.IMREAD_COLOR))
+            self.write_log('The image <u>{}</u> has been loaded <i>from local</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
     return load_from_local_triggered
 
 
@@ -33,36 +36,56 @@ def action_load_from_url_triggered(self):
         # show and execute the created dialog
         dialog.show()
         dialog.exec()
-        self.start_process(dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']], dialog.get_loaded_image())
+        if dialog.get_err_msg() == '':
+            name = dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']]
+            self.start_process(name, dialog.get_loaded_image())
+            self.write_log('The image <u>{}</u> has been loaded <i>from URL</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
+        else:
+            self.write_log(dialog.get_err_msg(), Colors.LOG_ERROR)
     return load_from_url_triggered
 
 
 # the triggered-event of the action-load-from-clipboard
 def action_load_from_clipboard_triggered(self):
+    # start the process
+    def start(win_name, img):
+        self.start_process(win_name, img)
+        self.clipboard_counter += 1
+        self.write_log('The image <u>{}</u> has been loaded <i>from the clipboard</i>.'.format(win_name), Colors.LOG_LOAD_IMAGE)
+
     # noinspection PyTypeChecker
     def load_from_clipboard_triggered():
-        # grab data from the clipboard
-        data = ImageGrab.grabclipboard()
-        # if the grabbed data is an image
-        if isinstance(data, Image.Image):
-            self.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(data.convert('RGB')))
-            self.clipboard_counter += 1
-        # if the grabbed data is a string, it could possibly be a filename, give it a try
-        elif isinstance(data, str):
-            self.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(data, cv2.IMREAD_COLOR))
-            self.clipboard_counter += 1
-        # if the grabbed data is a list
-        elif isinstance(data, list):
-            # iterate the list to try getting the image(s)
-            for item in data:
-                # if this item is an image
-                if isinstance(item, Image.Image):
-                    self.start_process('From clipboard {}'.format(self.clipboard_counter), np.asarray(item.convert('RGB')))
-                    self.clipboard_counter += 1
-                # if this item is a string, it could possibly be a filename, give it a try
-                elif isinstance(item, str):
-                    self.start_process('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
-                    self.clipboard_counter += 1
+        has_loaded = False
+        # noinspection PyBroadException
+        try:
+            # grab data from the clipboard
+            data = ImageGrab.grabclipboard()
+            # if the grabbed data is an image
+            if isinstance(data, Image.Image):
+                has_loaded = True
+                start('From clipboard {}'.format(self.clipboard_counter), np.asarray(data.convert('RGB')))
+            # if the grabbed data is a string, it could possibly be a filename, give it a try
+            elif isinstance(data, str):
+                has_loaded = True
+                start('From clipboard {}'.format(self.clipboard_counter), cv2.imread(data, cv2.IMREAD_COLOR))
+            # if the grabbed data is a list
+            elif isinstance(data, list):
+                # iterate the list to try getting the image(s)
+                for item in data:
+                    # if this item is an image
+                    if isinstance(item, Image.Image):
+                        has_loaded = True
+                        start('From clipboard {}'.format(self.clipboard_counter), np.asarray(item.convert('RGB')))
+                    # if this item is a string, it could possibly be a filename, give it a try
+                    elif isinstance(item, str):
+                        has_loaded = True
+                        start('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
+        except BaseException:
+            self.write_log('Failed to load the image from clipboard.', Colors.LOG_ERROR)
+        # if there's nothing loaded
+        if not has_loaded:
+            self.write_log('No images detected in the clipboard.', Colors.LOG_WARNING)
+
     return load_from_clipboard_triggered
 
 

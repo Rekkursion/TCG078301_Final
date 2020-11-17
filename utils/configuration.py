@@ -16,7 +16,7 @@ configuration = {
     'MAX_LEN_OF_WIN_NAME': 500,
 
     # the threshold parameter of retinaface when doing detections
-    'RETINAFACE_THRESHOLD': 0.01,
+    'RETINAFACE_THRESHOLD': 0.3,
 
     # the scale parameter of retinaface when doing detections
     'RETINAFACE_SCALE': 1.0,

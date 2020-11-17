@@ -11,11 +11,17 @@ class Colors(Enum):
     # the color of the temporary box when the user is face-framing
     USER_FRAMING_BOX = (202, 91, 111)
 
-    # the color of the general log
-    LOG_GENERAL = (85, 79, 182)
+    # the text-color of the log when an image is loaded successfully
+    LOG_LOAD_IMAGE = (85, 79, 182)
 
-    # the color of the error-like log
+    # the text-color of the log when the process of an image is done successfully
+    LOG_PROCESS_DONE = (177, 91, 46)
+
+    # the text-color of the error-like log
     LOG_ERROR = (244, 61, 22)
+
+    # the text-color of the warning-like log
+    LOG_WARNING = (200, 155, 1)
 
     # for the convenience (no need to write Colors.XXX.value, only Colors.XXX is nice)
     def __get__(self, instance, owner):
