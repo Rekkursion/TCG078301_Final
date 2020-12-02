@@ -109,6 +109,10 @@ def action_save_all_triggered(self):
                 if img is not None:
                     cnt += 1
                     cv2.imwrite(os.path.join(dir_name, 'processed_{}{}'.format(cnt, ext)), img)
+            if cnt > 0:
+                self.write_log('All processed images have been saved to the designated location.', Colors.LOG_IMAGE_SAVED)
+            else:
+                self.write_log('No any images which have been processed.', Colors.LOG_WARNING)
     return save_all_triggered
 
 
@@ -132,6 +136,10 @@ def action_save_selected_triggered(self):
                 if img is not None:
                     cnt += 1
                     cv2.imwrite(os.path.join(dir_name, 'processed_{}{}'.format(cnt, ext)), img)
+            if cnt > 0:
+                self.write_log('All selected processed images have been saved to the designated location.', Colors.LOG_IMAGE_SAVED)
+            else:
+                self.write_log('No any images which have been processed in the selected set.', Colors.LOG_WARNING)
     return save_selected_triggered
 
 

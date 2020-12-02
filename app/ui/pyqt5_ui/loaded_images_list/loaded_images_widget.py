@@ -3,6 +3,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 import cv2
 from utils.configuration import configuration as cfg
 from utils.help_func import replace_file_ext, get_file_ext
+from app.enums.colors import Colors
 from app.enums.process_status import ProcessStatus
 from app.enums.strings import Strs
 from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image, get_size_of_processed_image, get_num_of_detected_faces
@@ -20,10 +21,12 @@ class LoadedImagesWidget(QWidget):
         btn_show_img:           the menu-like button for showing both original & processed images
         btn_save_processed:     the button for saving the processed image
     """
-    def __init__(self, win_name, img, order, parent=None):
+    def __init__(self, win_name, img, order, log_writer, parent=None):
         super(LoadedImagesWidget, self).__init__(parent)
         # the window name
         self.win_name = win_name
+        # the log writer
+        self.log_writer = log_writer
         # some nodes of a single widget
         self.vbox_all = QVBoxLayout()
         # nodes of the first row
@@ -131,3 +134,5 @@ class LoadedImagesWidget(QWidget):
                 filename = replace_file_ext(filename, get_ext_of_loaded_image(self.win_name))
             # write the image into the file w/ the designated filename
             cv2.imwrite(filename, get_processed_image(self.win_name))
+            # write a log
+            self.log_writer(f'The processed image \"{self.win_name}\" has been saved to the designated location.', Colors.LOG_IMAGE_SAVED)

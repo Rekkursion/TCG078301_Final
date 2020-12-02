@@ -17,6 +17,9 @@ class Colors(Enum):
     # the text-color of the log when the process of an image is done successfully
     LOG_PROCESS_DONE = (177, 91, 46)
 
+    # the text-color of the log when an image/a set of images has/have been saved
+    LOG_IMAGE_SAVED = (107, 191, 146)
+
     # the text-color of the error-like log
     LOG_ERROR = (244, 61, 22)
 

@@ -182,7 +182,7 @@ def do_process(win_name, img, lock, widget, log_writer):
             # draw the boxes of detected-and-judged faces w/ the corresponding colors
             draw_boxes(win_name, img, judged_faces, orig_img=cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE))
             widget.notify_status_change(ProcessStatus.DONE)
-            log_writer('The process of the loaded image <u>{}</u> is done: {} 2D & {} 3D faces detected.'.format(win_name, *get_num_of_detected_faces(win_name)), Colors.LOG_PROCESS_DONE)
+            log_writer('The process of the loaded image <u>{}</u> has been done: {} 2D & {} 3D faces detected.'.format(win_name, *get_num_of_detected_faces(win_name)), Colors.LOG_PROCESS_DONE)
             # set the mouse callback to activate by-user events
             cv2.setMouseCallback(win_name, mouse_callback, (win_name, widget,))
         except BaseException:

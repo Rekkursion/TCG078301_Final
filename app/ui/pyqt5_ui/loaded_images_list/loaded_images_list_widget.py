@@ -3,13 +3,14 @@ from app.ui.pyqt5_ui.loaded_images_list.loaded_images_widget import LoadedImages
 
 
 class LoadedImagesListWidget(QListWidget):
-    def __init__(self):
+    def __init__(self, log_writer):
         super(LoadedImagesListWidget, self).__init__()
+        self.log_writer = log_writer
 
     # push an item into this list
     def push_back(self, win_name, img):
         if img is not None:
-            widget = LoadedImagesWidget(win_name, img, self.count() + 1)
+            widget = LoadedImagesWidget(win_name, img, self.count() + 1, self.log_writer)
             item = QListWidgetItem(self)
             item.setSizeHint(widget.sizeHint())
             self.addItem(item)

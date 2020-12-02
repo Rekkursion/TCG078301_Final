@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         # load the UI
         uic.loadUi('./ui/pyqt5_ui/main_window/main_window.ui', self)
         # the list-widget for showing all loaded images
-        self.lis_imgs = LoadedImagesListWidget()
+        self.lis_imgs = LoadedImagesListWidget(self.write_log)
         self.main_layout.addWidget(self.lis_imgs)
         # the text-browser for showing logs
         self.log_area = LogArea()
@@ -76,5 +76,3 @@ class MainWindow(QMainWindow):
     def write_log(self, text, color):
         log = '<span style="color: rgb{};">{}</span>'.format(str(color), '<strong>{}</strong>'.format(text))
         self.log_area.append(log)
-        # to keep the text-browser always at the bottom
-        # self.log_area.moveCursor(self.log_area.textCursor().End)
