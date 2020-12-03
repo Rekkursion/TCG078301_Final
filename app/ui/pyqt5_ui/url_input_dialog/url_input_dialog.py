@@ -7,6 +7,7 @@ from PIL.GifImagePlugin import GifImageFile
 import urllib
 import numpy as np
 from app.enums.strings import Strs
+from app.enums.dialog_status import DialogStatus
 
 
 # the dialog for the user to input the image-URL
@@ -29,6 +30,8 @@ class URLInputDialog(QDialog):
         self.loaded_img = None
         # the error message if needs
         self.err_msg = ''
+        # the status of the dialog
+        self.dialog_status = DialogStatus.DISPLAYING
         # register all text-related nodes to the str-enum class
         Strs.register_all(
             (self, Strs.URL_Input_Dialog_Title),
@@ -45,7 +48,7 @@ class URLInputDialog(QDialog):
         # reset the line-edit which is used to enter the url
         self.btn_reset.clicked.connect(lambda: {self.txt_url.setText(''), self.txt_url.setFocus()})
         # cancel the whole action
-        self.btn_cancel.clicked.connect(lambda: self.close())
+        self.btn_cancel.clicked.connect(lambda: self.cancel())
         pass
 
     # download the image from the designated url-text
@@ -63,13 +66,24 @@ class URLInputDialog(QDialog):
                 raise UnidentifiedImageError
             # set the image as the loaded one
             self.loaded_img = np.asarray(img)
+            # change the dialog-status to accepted
+            self.dialog_status = DialogStatus.ACCEPTED
             # self.write_log('The image <u>{}</u> has been loaded <i>from local</i>.'.format(filename), Colors.LOG_LOAD_IMAGE)
         # some possible errors due to the network-related things (url, socket, http, etc.)
         except (socket.error, urllib.error.URLError, urllib.error.HTTPError, urllib.error.ContentTooShortError):
             self.err_msg = 'Image downloading failed.'
+            # change the dialog-status to error
+            self.dialog_status = DialogStatus.ERROR
         # some possible errors since the loaded image may be with an unknown or unsupported format/content
         except (ValueError, UnidentifiedImageError, OSError):
             self.err_msg = 'Unknown image file. Please aware that GIF files are NOT supported.'
+            # change the dialog-status to error
+            self.dialog_status = DialogStatus.ERROR
+
+    # cancel this dialog
+    def cancel(self):
+        self.dialog_status = DialogStatus.CANCELED
+        self.close()
 
     # get the user-entered url
     def get_url(self):
@@ -82,3 +96,7 @@ class URLInputDialog(QDialog):
     # get the error message if some error happened, or it will return an empty string
     def get_err_msg(self):
         return self.err_msg
+
+    # get the status of this dialog
+    def get_status(self):
+        return self.dialog_status

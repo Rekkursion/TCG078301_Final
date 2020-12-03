@@ -4,11 +4,13 @@ import numpy as np
 import cv2
 import os
 from app.enums.colors import Colors
+from app.enums.dialog_status import DialogStatus
 from app.enums.strings import Strs
 from app.loaded_image import get_ext_of_loaded_image, get_processed_image
 from app.preferences.pref_manager import PrefManager
 from app.ui.pyqt5_ui.url_input_dialog.url_input_dialog import URLInputDialog
 from utils.configuration import configuration as cfg
+from utils.image_io_w_pickle import load_img_w_pickle
 
 
 # the triggered-event of the action-load-from-local
@@ -36,7 +38,7 @@ def action_load_from_url_triggered(self):
         # show and execute the created dialog
         dialog.show()
         dialog.exec()
-        if dialog.get_err_msg() == '':
+        if dialog.get_status() == DialogStatus.ACCEPTED:
             name = dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']]
             self.start_process(name, dialog.get_loaded_image())
             self.write_log('The image <u>{}</u> has been loaded <i>from URL</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
@@ -85,13 +87,14 @@ def action_load_from_clipboard_triggered(self):
         # if there's nothing loaded
         if not has_loaded:
             self.write_log('No images detected in the clipboard.', Colors.LOG_WARNING)
-
     return load_from_clipboard_triggered
 
 
 # the triggered-event of the action-browse-recently-loaded
 def action_browse_recently_loaded_triggered(self):
     def browse_recently_loaded_triggered():
+        m = load_img_w_pickle(os.path.join(cfg['RECENTLY_LOADED_IMAGES_PATH'], '2020_12_03_11_55_27'))
+        cv2.imshow('sss', m)
         # todo: browse recently loaded
         pass
         # create a url-input-dialog to get the image-url

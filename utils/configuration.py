@@ -31,5 +31,11 @@ configuration = {
     'SCALING_FACTOR_ON_CV_WIN': 1.1,
 
     # the sampling rate of mouse-moving event (face-framing) on opencv-windows
-    'SAMPLING_RATE_OF_FRAMING_ON_CV_WIN': 5
+    'SAMPLING_RATE_OF_FRAMING_ON_CV_WIN': 5,
+
+    # the path for globally storing loaded images
+    'RECENTLY_LOADED_IMAGES_PATH': './res/loaded_img/',
+
+    # the string format for converting date-time into string
+    'DATE_TIME_STR_FORMAT': '%Y_%m_%d_%H_%M_%S'
 }

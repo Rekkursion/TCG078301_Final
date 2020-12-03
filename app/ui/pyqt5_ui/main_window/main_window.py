@@ -1,3 +1,4 @@
+from datetime import datetime
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QAbstractItemView
 from PyQt5.QtGui import QFont
@@ -8,6 +9,8 @@ from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedI
 from app.ui.pyqt5_ui.main_window.main_window_actions import *
 from app.enums.strings import Strs
 from utils.help_func import do_process
+from utils.configuration import configuration as cfg
+from utils.image_io_w_pickle import save_img_w_pickle
 
 
 class MainWindow(QMainWindow):
@@ -78,6 +81,7 @@ class MainWindow(QMainWindow):
         widget = self.lis_imgs.push_back(win_name, img)
         Thread(target=do_process, name=win_name, daemon=True,
                args=(win_name, img, get_process_lock(), widget, self.write_log)).start()
+        save_img_w_pickle(os.path.join(cfg['RECENTLY_LOADED_IMAGES_PATH'], datetime.now().strftime(cfg['DATE_TIME_STR_FORMAT'])), img)
 
     # write a single log and the text-color at the log-area (text-browser)
     def write_log(self, text, color):
