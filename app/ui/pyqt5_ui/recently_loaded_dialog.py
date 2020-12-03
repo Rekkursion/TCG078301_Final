@@ -27,7 +27,7 @@ class URLInputDialog(QDialog):
         self.setWindowModality(Qt.ApplicationModal)
         # the loaded image if any
         self.loaded_img = None
-        # the error message if needs
+        # the error messsage if needs
         self.err_msg = ''
         # register all text-related nodes to the str-enum class
         Strs.register_all(

@@ -12,14 +12,16 @@ from utils.help_func import do_process
 
 class MainWindow(QMainWindow):
     """
-        action_load_from_local:     the action for loading the image from local
-        action_load_from_url:       the action for loading the image from a certain url
-        action_load_from_clipboard: the action for loading the image from the clipboard (only windows & macs supported)
-        action_save_all:            the action for saving all the processed images to a directory
-        action_save_selected:       the action for saving the selected images to a directory
-        action_lang_chi:            the action for switching the language into chinese
-        action_lang_eng:            the action for switching the language into english
-        lis_imgs:                   the list-widget for showing all loaded/processed images
+        action_load_from_local:         the action for loading the image from local
+        action_load_from_url:           the action for loading the image from a certain url
+        action_load_from_clipboard:     the action for loading the image from the clipboard (only windows & macs supported)
+        action_browse_recently_loaded:  the action for browsing the recently loaded images
+        action_clear_recently_loaded:   the action for clearing the history of recently loaded images
+        action_save_all:                the action for saving all the processed images to a directory
+        action_save_selected:           the action for saving the selected images to a directory
+        action_lang_chi:                the action for switching the language into chinese
+        action_lang_eng:                the action for switching the language into english
+        lis_imgs:                       the list-widget for showing all loaded/processed images
     """
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -48,6 +50,9 @@ class MainWindow(QMainWindow):
             (self.action_load_from_local, Strs.Menubar_File_Load_From_Local),
             (self.action_load_from_url, Strs.Menubar_File_Load_From_URL),
             (self.action_load_from_clipboard, Strs.Menubar_File_Load_From_Clipboard),
+            (self.menu_recently_loaded, Strs.Menubar_File_Recently_Loaded),
+            (self.action_browse_recently_loaded, Strs.Menubar_File_Browse_Recently_Loaded),
+            (self.action_clear_recently_loaded, Strs.Menubar_File_Clear_Recently_Loaded),
             (self.menu_Save, Strs.Menubar_File_Save),
             (self.action_save_all, Strs.Menubar_File_Save_All),
             (self.action_save_selected, Strs.Menubar_File_Save_Selected),
@@ -60,6 +65,8 @@ class MainWindow(QMainWindow):
         self.action_load_from_local.triggered.connect(action_load_from_local_triggered(self))
         self.action_load_from_url.triggered.connect(action_load_from_url_triggered(self))
         self.action_load_from_clipboard.triggered.connect(action_load_from_clipboard_triggered(self))
+        self.action_browse_recently_loaded.triggered.connect(action_browse_recently_loaded_triggered(self))
+        self.action_clear_recently_loaded.triggered.connect(action_clear_recently_loaded_triggered(self))
         self.action_save_all.triggered.connect(action_save_all_triggered(self))
         self.action_save_selected.triggered.connect(action_save_selected_triggered(self))
         self.action_lang_chi.triggered.connect(action_lang_chi_triggered(self))

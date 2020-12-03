@@ -70,9 +70,18 @@
      <property name="title">
       <string>載入 Load</string>
      </property>
+     <widget class="QMenu" name="menu_recently_loaded">
+      <property name="title">
+       <string>最近載入的... Recently loaded...</string>
+      </property>
+      <addaction name="action_browse_recently_loaded"/>
+      <addaction name="action_clear_recently_loaded"/>
+     </widget>
      <addaction name="action_load_from_local"/>
      <addaction name="action_load_from_url"/>
      <addaction name="action_load_from_clipboard"/>
+     <addaction name="separator"/>
+     <addaction name="menu_recently_loaded"/>
     </widget>
     <widget class="QMenu" name="menu_Save">
      <property name="title">
@@ -169,6 +178,16 @@
    </property>
    <property name="text">
     <string>English</string>
+   </property>
+  </action>
+  <action name="action_browse_recently_loaded">
+   <property name="text">
+    <string>Browse</string>
+   </property>
+  </action>
+  <action name="action_clear_recently_loaded">
+   <property name="text">
+    <string>Clear</string>
    </property>
   </action>
  </widget>
