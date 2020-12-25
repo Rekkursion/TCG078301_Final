@@ -1,8 +1,10 @@
+import os
+
+import cv2
+import numpy as np
 from PIL import ImageGrab, Image
 from PyQt5.QtWidgets import QFileDialog
-import numpy as np
-import cv2
-import os
+
 from app.enums.colors import Colors
 from app.enums.dialog_status import DialogStatus
 from app.enums.strings import Strs

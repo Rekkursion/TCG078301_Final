@@ -1,13 +1,13 @@
-from datetime import datetime
-from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QAbstractItemView
-from PyQt5.QtGui import QFont
 from threading import Thread
+
+from PyQt5 import uic
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QMainWindow
+
 from app.environment.env_helpers import get_process_lock
-from app.ui.pyqt5_ui.log_area import LogArea
 from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
+from app.ui.pyqt5_ui.log_area import LogArea
 from app.ui.pyqt5_ui.main_window.main_window_actions import *
-from app.enums.strings import Strs
 from utils.help_func import do_process
 
 

@@ -1,6 +1,6 @@
 import cv2
-from utils.configuration import configuration as cfg
 
+from utils.configuration import configuration as cfg
 
 # the dictionary of all loaded images
 # key, value: win_name, loaded-image-info

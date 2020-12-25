@@ -1,13 +1,15 @@
 import socket
+import urllib
+
+import numpy as np
+from PIL import Image, UnidentifiedImageError
+from PIL.GifImagePlugin import GifImageFile
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
-from PIL import Image, UnidentifiedImageError
-from PIL.GifImagePlugin import GifImageFile
-import urllib
-import numpy as np
-from app.enums.strings import Strs
+
 from app.enums.dialog_status import DialogStatus
+from app.enums.strings import Strs
 
 
 # the dialog for the user to input the image-URL

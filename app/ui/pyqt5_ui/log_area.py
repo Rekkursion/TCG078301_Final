@@ -1,5 +1,3 @@
-from PyQt5 import QtGui
-from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import QTextBrowser
 
 

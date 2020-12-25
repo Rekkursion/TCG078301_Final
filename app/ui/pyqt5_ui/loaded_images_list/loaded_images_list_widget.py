@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QAbstractItemView
+
 from app.ui.pyqt5_ui.loaded_images_list.loaded_images_widget import LoadedImagesWidget
 
 

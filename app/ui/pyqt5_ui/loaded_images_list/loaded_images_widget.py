@@ -1,12 +1,14 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QMenu, QAction, QFileDialog
-from PyQt5.QtGui import QIcon, QPixmap
 import cv2
-from utils.configuration import configuration as cfg
-from utils.help_func import replace_file_ext, get_file_ext
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QMenu, QAction, QFileDialog
+
 from app.enums.colors import Colors
 from app.enums.process_status import ProcessStatus
 from app.enums.strings import Strs
-from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image, get_size_of_processed_image, get_num_of_detected_faces
+from app.loaded_image import get_processed_image, get_original_image, get_ext_of_loaded_image, \
+    get_size_of_processed_image, get_num_of_detected_faces
+from utils.configuration import configuration as cfg
+from utils.help_func import replace_file_ext, get_file_ext
 
 
 # noinspection PyUnresolvedReferences

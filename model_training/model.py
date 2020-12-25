@@ -1,10 +1,10 @@
-import tensorflow
-from tensorflow import keras
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten
-from PIL import Image
-import numpy as np
 import cv2
+import numpy as np
+import tensorflow
+from PIL import Image
+from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten
+from tensorflow.keras.models import Sequential
+
 from utils.configuration import configuration as cfg
 
 

@@ -1,16 +1,19 @@
-import tensorflow as tf
-import numpy as np
 import os
-import cv2
 import threading
-from PIL import Image
 from random import randint
+
+import cv2
+import numpy as np
+import tensorflow as tf
+from PIL import Image
+
 from app.enums.colors import Colors
-from utils.configuration import configuration as cfg
-from app.environment import env_helpers as helper
-from app.ui.cv2_ui.callbacks import mouse_callback
-from app.loaded_image import add_detected_face, add_processed_image, update_processed_image, get_original_image, get_detected_faces, get_num_of_detected_faces
 from app.enums.process_status import ProcessStatus
+from app.environment import env_helpers as helper
+from app.loaded_image import add_detected_face, add_processed_image, update_processed_image, get_original_image, \
+    get_detected_faces, get_num_of_detected_faces
+from app.ui.cv2_ui.callbacks import mouse_callback
+from utils.configuration import configuration as cfg
 
 
 # randomly get an index in a certain range starts from zero

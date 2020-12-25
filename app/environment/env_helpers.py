@@ -1,13 +1,13 @@
 import cv2
 import insightface
-import tensorflow
 import numpy as np
+
 from app.enums.colors import Colors
+from app.environment.env import *
+from app.loaded_image import get_processed_image
 from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
 from utils.help_func import judge_avatars, draw_boxes, make_sure_order_of_points
-from app.environment.env import *
-from app.loaded_image import get_processed_image
 
 
 # get the pre-trained rekk-model

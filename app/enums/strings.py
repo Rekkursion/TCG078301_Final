@@ -1,8 +1,9 @@
 from enum import Enum
-from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QMenu, QAction, QLineEdit, QDialog
-from PyQt5.QtGui import QFont
-from app.preferences.pref_manager import PrefManager
 
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QMenu, QAction, QLineEdit, QDialog
+
+from app.preferences.pref_manager import PrefManager
 
 # the dictionary to contain all registered nodes (components)
 _registered_dict = dict()
