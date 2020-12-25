@@ -40,6 +40,11 @@ class MainWindow(QMainWindow):
         self.init_events()
         # the counter for counting the number of opened images through the clipboard
         self.clipboard_counter = 0
+        # initially set the currently-used language
+        if PrefManager.get_pref('lang') == 0:
+            self.action_lang_chi.setChecked(True)
+        else:
+            self.action_lang_eng.setChecked(True)
         # register all text-related nodes to the str-enum class
         Strs.register_all(
             (self, Strs.Main_Window_Title),
