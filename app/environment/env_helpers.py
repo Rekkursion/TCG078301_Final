@@ -1,5 +1,6 @@
 import cv2
 import insightface
+import tensorflow
 import numpy as np
 from app.enums.colors import Colors
 from model_training.model import RekkModel

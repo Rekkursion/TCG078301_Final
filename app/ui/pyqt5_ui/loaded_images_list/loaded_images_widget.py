@@ -21,7 +21,7 @@ class LoadedImagesWidget(QWidget):
         btn_show_img:           the menu-like button for showing both original & processed images
         btn_save_processed:     the button for saving the processed image
     """
-    def __init__(self, win_name, img, order, log_writer, parent=None):
+    def __init__(self, win_name, img, order, log_writer=None, parent=None):
         super(LoadedImagesWidget, self).__init__(parent)
         # the window name
         self.win_name = win_name
@@ -135,4 +135,5 @@ class LoadedImagesWidget(QWidget):
             # write the image into the file w/ the designated filename
             cv2.imwrite(filename, get_processed_image(self.win_name))
             # write a log
-            self.log_writer(f'The processed image \"{self.win_name}\" has been saved to the designated location.', Colors.LOG_IMAGE_SAVED)
+            if self.log_writer is not None:
+                self.log_writer(f'The processed image \"{self.win_name}\" has been saved to the designated location.', Colors.LOG_IMAGE_SAVED)

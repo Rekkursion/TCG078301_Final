@@ -49,7 +49,6 @@ class URLInputDialog(QDialog):
         self.btn_reset.clicked.connect(lambda: {self.txt_url.setText(''), self.txt_url.setFocus()})
         # cancel the whole action
         self.btn_cancel.clicked.connect(lambda: self.cancel())
-        pass
 
     # download the image from the designated url-text
     # noinspection PyUnresolvedReferences

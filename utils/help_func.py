@@ -185,9 +185,10 @@ def do_process(win_name, img, lock, widget, log_writer):
             log_writer('The process of the loaded image <u>{}</u> has been done: {} 2D & {} 3D faces detected.'.format(win_name, *get_num_of_detected_faces(win_name)), Colors.LOG_PROCESS_DONE)
             # set the mouse callback to activate by-user events
             cv2.setMouseCallback(win_name, mouse_callback, (win_name, widget,))
-        except BaseException:
+        except BaseException as e:
             widget.notify_status_change(ProcessStatus.ERROR)
             log_writer('Error happened when the program processes the loaded image <u>{}</u>.'.format(win_name), Colors.LOG_ERROR)
+            raise e
     # if the current thread is not the main thread, wait for user's action to avoid window-flashing
     if threading.current_thread() is not threading.main_thread():
         cv2.waitKey(0)

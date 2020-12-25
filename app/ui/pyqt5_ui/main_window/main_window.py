@@ -9,8 +9,6 @@ from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedI
 from app.ui.pyqt5_ui.main_window.main_window_actions import *
 from app.enums.strings import Strs
 from utils.help_func import do_process
-from utils.configuration import configuration as cfg
-from utils.image_io_w_pickle import save_img_w_pickle
 
 
 class MainWindow(QMainWindow):
@@ -18,8 +16,6 @@ class MainWindow(QMainWindow):
         action_load_from_local:         the action for loading the image from local
         action_load_from_url:           the action for loading the image from a certain url
         action_load_from_clipboard:     the action for loading the image from the clipboard (only windows & macs supported)
-        action_browse_recently_loaded:  the action for browsing the recently loaded images
-        action_clear_recently_loaded:   the action for clearing the history of recently loaded images
         action_save_all:                the action for saving all the processed images to a directory
         action_save_selected:           the action for saving the selected images to a directory
         action_lang_chi:                the action for switching the language into chinese
@@ -44,7 +40,6 @@ class MainWindow(QMainWindow):
         self.init_events()
         # the counter for counting the number of opened images through the clipboard
         self.clipboard_counter = 0
-        self.lis_imgs.setSelectionMode(QAbstractItemView.ExtendedSelection)
         # register all text-related nodes to the str-enum class
         Strs.register_all(
             (self, Strs.Main_Window_Title),
@@ -53,9 +48,6 @@ class MainWindow(QMainWindow):
             (self.action_load_from_local, Strs.Menubar_File_Load_From_Local),
             (self.action_load_from_url, Strs.Menubar_File_Load_From_URL),
             (self.action_load_from_clipboard, Strs.Menubar_File_Load_From_Clipboard),
-            (self.menu_recently_loaded, Strs.Menubar_File_Recently_Loaded),
-            (self.action_browse_recently_loaded, Strs.Menubar_File_Browse_Recently_Loaded),
-            (self.action_clear_recently_loaded, Strs.Menubar_File_Clear_Recently_Loaded),
             (self.menu_Save, Strs.Menubar_File_Save),
             (self.action_save_all, Strs.Menubar_File_Save_All),
             (self.action_save_selected, Strs.Menubar_File_Save_Selected),
@@ -68,8 +60,6 @@ class MainWindow(QMainWindow):
         self.action_load_from_local.triggered.connect(action_load_from_local_triggered(self))
         self.action_load_from_url.triggered.connect(action_load_from_url_triggered(self))
         self.action_load_from_clipboard.triggered.connect(action_load_from_clipboard_triggered(self))
-        self.action_browse_recently_loaded.triggered.connect(action_browse_recently_loaded_triggered(self))
-        self.action_clear_recently_loaded.triggered.connect(action_clear_recently_loaded_triggered(self))
         self.action_save_all.triggered.connect(action_save_all_triggered(self))
         self.action_save_selected.triggered.connect(action_save_selected_triggered(self))
         self.action_lang_chi.triggered.connect(action_lang_chi_triggered(self))
@@ -81,7 +71,6 @@ class MainWindow(QMainWindow):
         widget = self.lis_imgs.push_back(win_name, img)
         Thread(target=do_process, name=win_name, daemon=True,
                args=(win_name, img, get_process_lock(), widget, self.write_log)).start()
-        save_img_w_pickle(os.path.join(cfg['RECENTLY_LOADED_IMAGES_PATH'], datetime.now().strftime(cfg['DATE_TIME_STR_FORMAT'])), img)
 
     # write a single log and the text-color at the log-area (text-browser)
     def write_log(self, text, color):
