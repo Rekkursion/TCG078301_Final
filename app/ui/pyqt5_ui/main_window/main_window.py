@@ -24,8 +24,6 @@ class MainWindow(QMainWindow):
     """
     def __init__(self):
         super(MainWindow, self).__init__()
-        # set the title of the main window
-        self.setWindowTitle('TCG078301_Final - B10615031')
         # load the UI
         uic.loadUi('./ui/pyqt5_ui/main_window/main_window.ui', self)
         # the list-widget for showing all loaded images

@@ -6,7 +6,8 @@ from utils.help_func import *
 
 
 # do the process of building, training, and saving the model up
-def do_process():
+def do_process_of_model_training():
+    # use cpu instead of gpu
     with tensorflow.device('/cpu:0'):
         # step 1. load the images as data
         animes = load_imgs_from_dir(cfg['ANIME_AVATAR_DIR'])
@@ -35,5 +36,4 @@ def do_process():
 
 # main
 if __name__ == '__main__':
-    init_gpus()
-    do_process()
+    do_process_of_model_training()

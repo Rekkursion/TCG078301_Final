@@ -19,7 +19,7 @@ _font_size = 9
 
 class Strs(Enum):
     # titles of some windows/dialogs
-    Main_Window_Title = ('二次元/三次元頭像偵測', '2D/3D Detector')
+    Main_Window_Title = ('TCG078301_Final - 真人或手繪人臉之辨識器 - B10615031', 'TCG078301_Final - Real/Fake Faces Detector - B10615031')
     URL_Input_Dialog_Title = ('地址輸入對話框', 'URL Input Dialog')
 
     # something related to the menubar in main-window

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1405</width>
-    <height>750</height>
+    <width>1134</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,7 +48,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1405</width>
+     <width>1134</width>
      <height>24</height>
     </rect>
    </property>
@@ -59,7 +59,7 @@
      </font>
     </property>
     <property name="title">
-     <string>檔案 File</string>
+     <string>檔案</string>
     </property>
     <widget class="QMenu" name="menu_Load">
      <property name="font">
@@ -68,7 +68,7 @@
       </font>
      </property>
      <property name="title">
-      <string>載入 Load</string>
+      <string>載入</string>
      </property>
      <addaction name="action_load_from_local"/>
      <addaction name="action_load_from_url"/>
@@ -77,7 +77,7 @@
     </widget>
     <widget class="QMenu" name="menu_Save">
      <property name="title">
-      <string>儲存 Save</string>
+      <string>儲存</string>
      </property>
      <addaction name="action_save_all"/>
      <addaction name="action_save_selected"/>
@@ -87,11 +87,11 @@
    </widget>
    <widget class="QMenu" name="menu_preferences">
     <property name="title">
-     <string>設定 Preferences</string>
+     <string>設定</string>
     </property>
     <widget class="QMenu" name="menu_lang">
      <property name="title">
-      <string>介面語言 Interface language</string>
+      <string>介面語言</string>
      </property>
      <addaction name="action_lang_chi"/>
      <addaction name="action_lang_eng"/>

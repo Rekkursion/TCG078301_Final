@@ -1,10 +1,8 @@
 import os
 import threading
-from random import randint
 
 import cv2
 import numpy as np
-import tensorflow as tf
 from PIL import Image
 
 from app.enums.colors import Colors
@@ -14,11 +12,6 @@ from app.loaded_image import add_detected_face, add_processed_image, update_proc
     get_detected_faces, get_num_of_detected_faces
 from app.ui.cv2_ui.callbacks import mouse_callback
 from utils.configuration import configuration as cfg
-
-
-# randomly get an index in a certain range starts from zero
-def get_idx(max_idx):
-    return randint(0, max_idx - 1)
 
 
 # load images which are under a certain directory
@@ -83,14 +76,6 @@ def split_data(animes, reals, ratio):
     return x_train, y_train, x_test, y_test
 
 
-# show the detail of a predicted testing-image
-def show_detail_of_predicted(x_test_origin, y_test_origin, prediction, idx=-1):
-    if idx < 0:
-        idx = get_idx(x_test_origin.shape[0])
-    print('   predicted:', cfg['CLS_NAMES'][prediction[idx]])
-    print('ground truth:', cfg['CLS_NAMES'][y_test_origin[idx]])
-
-
 # get the face through an original image and a detected face-box on it
 def get_face(img, box):
     x1, y1, x2, y2, _ = box.astype(np.int)
@@ -134,9 +119,6 @@ def judge_avatars(detected_faces):
             pred = rekk.do_prediction(face)
             # add the prediction into the result-list and loaded-image-dict
             ret.append((face, pt_1, pt_2, pred))
-    else:
-        # todo: exception handling
-        print('wtf')
     # return the list of results
     return ret
 
@@ -227,16 +209,3 @@ def replace_file_ext(filename, replacer_ext):
     # else, replace the extension
     else:
         return '{}{}'.format(filename[:len(filename) - len(replacee_ext)], replacer_ext)
-
-
-# initialize gpus
-def init_gpus():
-    gpus = tf.config.experimental.list_physical_devices('GPU')
-    if gpus:
-        try:
-            for gpu in gpus:
-                tf.config.experimental.set_memory_growth(gpu, True)
-            logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
-        except RuntimeError as e:
-            print(e)
