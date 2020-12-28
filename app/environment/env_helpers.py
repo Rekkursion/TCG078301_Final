@@ -5,6 +5,7 @@ import numpy as np
 from app.enums.colors import Colors
 from app.environment.env import *
 from app.loaded_image import get_processed_image
+from app.preferences.pref_manager import PrefManager
 from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
 from utils.help_func import judge_avatars, draw_boxes
@@ -102,10 +103,15 @@ def is_framing_face_by_user():
 
 
 # load the pre-trained models of both rekk-model and retinaface
+# noinspection PyBroadException
 def load_pretrained_models():
     # load the pre-trained rekk-model which is used to judge the 2D/3D avatar (face)
     env_dict[REKK_MODEL] = RekkModel((cfg['SIZE_OF_IMGS'][0], cfg['SIZE_OF_IMGS'][1], 3), 2)
-    env_dict[REKK_MODEL].load_weights('../model_training/pretrained_model/rekk_model.h5')
+    # try to load the pre-set (if any) path of the pretrained rekk-model
+    try:
+        env_dict[REKK_MODEL].load_weights(PrefManager.get_pref('rekkmodel'))
+    except BaseException:
+        pass
     # load the pre-trained retinaface from insightface which is used to detect the faces from an image
     env_dict[RETINAFACE_MODEL] = insightface.model_zoo.get_model('retinaface_r50_v1')
     env_dict[RETINAFACE_MODEL].prepare(ctx_id=-1, nms=0.4)

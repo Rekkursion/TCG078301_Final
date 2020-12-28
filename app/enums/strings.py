@@ -33,6 +33,7 @@ class Strs(Enum):
     Menubar_File_Save_Selected = ('儲存目前有選定的圖片到目錄', 'Save the selected images to a directory')
     Menubar_Pref = ('設定', 'Preferences')
     Menubar_Pref_Lang = ('介面語言', 'Interface language')
+    Menubar_Pref_Pretrained_Rekk_Model = ('設置預訓練的 RekkModel 的路徑（只需設置一次）', 'Set the path of the pretrained RekkModel (Only need to set once)')
 
     # something related to the url-input-dialog
     URL_Dialog_Line_Edit_Placeholder = ('在此鍵入圖片地址。', 'Enter the image URL here.')
@@ -56,6 +57,7 @@ class Strs(Enum):
     Open_File_Dialog_Caption = ('選取圖片', 'Select an image')
     Save_File_Dialog_Caption = ('儲存處理後的圖片', 'Save the processed image')
     Open_Directory_Dialog_Caption = ('選取目錄', 'Select a directory')
+    Open_RekkModel_Dialog_Caption = ('設置預訓練的 RekkModel 的路徑（只需設置一次）', 'Set the path of the pretrained RekkModel (Only need to set once)')
 
     # get the literal string by a certain enumeration type
     @staticmethod

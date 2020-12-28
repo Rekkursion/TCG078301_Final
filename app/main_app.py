@@ -16,9 +16,9 @@ def start_app():
 
 
 if __name__ == '__main__':
-    # load the pre-trained models (rekk-model & retinaface)
-    helper.load_pretrained_models()
     # initially load the preferences from the json file
     PrefManager.init_pref()
+    # load the pre-trained models (rekk-model & retinaface)
+    helper.load_pretrained_models()
     # start the application
     start_app()

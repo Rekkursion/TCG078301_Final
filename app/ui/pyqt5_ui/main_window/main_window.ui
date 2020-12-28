@@ -97,6 +97,7 @@
      <addaction name="action_lang_eng"/>
     </widget>
     <addaction name="menu_lang"/>
+    <addaction name="action_pretrained_rekk_model"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_preferences"/>
@@ -180,6 +181,11 @@
   <action name="action_clear_recently_loaded">
    <property name="text">
     <string>Clear</string>
+   </property>
+  </action>
+  <action name="action_pretrained_rekk_model">
+   <property name="text">
+    <string>設置預訓練的 RekkModel</string>
    </property>
   </action>
  </widget>

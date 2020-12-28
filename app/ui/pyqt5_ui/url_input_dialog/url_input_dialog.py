@@ -69,7 +69,6 @@ class URLInputDialog(QDialog):
             self.loaded_img = np.asarray(img)
             # change the dialog-status to accepted
             self.dialog_status = DialogStatus.ACCEPTED
-            # self.write_log('The image <u>{}</u> has been loaded <i>from local</i>.'.format(filename), Colors.LOG_LOAD_IMAGE)
         # some possible errors due to the network-related things (url, socket, http, etc.)
         except (socket.error, urllib.error.URLError, urllib.error.HTTPError, urllib.error.ContentTooShortError):
             self.err_msg = 'Image downloading failed.'

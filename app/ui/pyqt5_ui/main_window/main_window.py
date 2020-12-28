@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         action_save_selected:           the action for saving the selected images to a directory
         action_lang_chi:                the action for switching the language into chinese
         action_lang_eng:                the action for switching the language into english
+        action_pretrained_rekk_model:   the action for setting the pretrained rekk-model
         lis_imgs:                       the list-widget for showing all loaded/processed images
     """
     def __init__(self):
@@ -56,7 +57,8 @@ class MainWindow(QMainWindow):
             (self.action_save_all, Strs.Menubar_File_Save_All),
             (self.action_save_selected, Strs.Menubar_File_Save_Selected),
             (self.menu_preferences, Strs.Menubar_Pref),
-            (self.menu_lang, Strs.Menubar_Pref_Lang)
+            (self.menu_lang, Strs.Menubar_Pref_Lang),
+            (self.action_pretrained_rekk_model, Strs.Menubar_Pref_Pretrained_Rekk_Model)
         )
 
     # initialize the events
@@ -68,6 +70,7 @@ class MainWindow(QMainWindow):
         self.action_save_selected.triggered.connect(action_save_selected_triggered(self))
         self.action_lang_chi.triggered.connect(action_lang_chi_triggered(self))
         self.action_lang_eng.triggered.connect(action_lang_eng_triggered(self))
+        self.action_pretrained_rekk_model.triggered.connect(action_pretrained_rekk_model_triggered(self))
 
     # start the process of detection & judgement of a certain image
     def start_process(self, win_name, img):
@@ -79,11 +82,22 @@ class MainWindow(QMainWindow):
                 img.shape[0],
                 cfg['MIN_SIZE_OF_IMG']
             ), Colors.LOG_ERROR)
-            return
+            return False
+        # check if the path of the pretrained rekk-model is set or not
+        rekk_model_path = PrefManager.get_pref('rekkmodel')
+        # if no, trigger the dialog to let the user set the path
+        if rekk_model_path is None or rekk_model_path == '':
+            # open the file-dialog
+            rekk_model_path = action_pretrained_rekk_model_triggered(self)()
+            # if the user still no select the pretrained rekk-model, return directly
+            if rekk_model_path is None or rekk_model_path == '':
+                self.write_log('A pretrained <b>RekkModel</b> is a must for judging faces. Please set the path of the pretrained <b>RekkModel</b>.', Colors.LOG_ERROR)
+                return False
         win_name = self.lis_imgs.deduplicate_win_name(win_name)
         widget = self.lis_imgs.push_back(win_name, img)
         Thread(target=do_process, name=win_name, daemon=True,
                args=(win_name, img, get_process_lock(), widget, self.write_log)).start()
+        return True
 
     # write a single log and the text-color at the log-area (text-browser)
     def write_log(self, text, color):

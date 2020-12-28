@@ -17,7 +17,7 @@ class PrefManager:
     # get a single preference
     @staticmethod
     def get_pref(key):
-        return PrefManager.pref_dict[key]
+        return PrefManager.pref_dict.get(key)
 
     # update the preferences json file
     @staticmethod

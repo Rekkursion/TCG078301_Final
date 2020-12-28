@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 from app.enums.colors import Colors
 from app.enums.dialog_status import DialogStatus
 from app.enums.strings import Strs
+from app.environment.env_helpers import load_pretrained_models
 from app.loaded_image import get_ext_of_loaded_image, get_processed_image, get_size_of_processed_image
 from app.preferences.pref_manager import PrefManager
 from app.ui.pyqt5_ui.url_input_dialog.url_input_dialog import URLInputDialog
@@ -26,8 +27,8 @@ def action_load_from_local_triggered(self):
         # iterate the filenames to do the processes
         for filename in filename_list:
             name = filename[:cfg['MAX_LEN_OF_WIN_NAME']]
-            self.start_process(name, cv2.imread(filename, cv2.IMREAD_COLOR))
-            self.write_log('The image <u>{}</u> has been loaded <i>from local</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
+            if self.start_process(name, cv2.imread(filename, cv2.IMREAD_COLOR)):
+                self.write_log('The image <u>{}</u> has been loaded <i>from local</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
     return load_from_local_triggered
 
 
@@ -41,8 +42,8 @@ def action_load_from_url_triggered(self):
         dialog.exec()
         if dialog.get_status() == DialogStatus.ACCEPTED:
             name = dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']]
-            self.start_process(name, dialog.get_loaded_image())
-            self.write_log('The image <u>{}</u> has been loaded <i>from URL</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
+            if self.start_process(name, dialog.get_loaded_image()):
+                self.write_log('The image <u>{}</u> has been loaded <i>from URL</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
         else:
             self.write_log(dialog.get_err_msg(), Colors.LOG_ERROR)
     return load_from_url_triggered
@@ -52,9 +53,9 @@ def action_load_from_url_triggered(self):
 def action_load_from_clipboard_triggered(self):
     # start the process
     def start(win_name, img):
-        self.start_process(win_name, img)
-        self.clipboard_counter += 1
-        self.write_log('The image <u>{}</u> has been loaded <i>from the clipboard</i>.'.format(win_name), Colors.LOG_LOAD_IMAGE)
+        if self.start_process(win_name, img):
+            self.clipboard_counter += 1
+            self.write_log('The image <u>{}</u> has been loaded <i>from the clipboard</i>.'.format(win_name), Colors.LOG_LOAD_IMAGE)
 
     # noinspection PyTypeChecker
     def load_from_clipboard_triggered():
@@ -183,3 +184,22 @@ def __change_lang_to(self, lang_idx):
                 Strs.get_by_enum(Strs.Loaded_Img_Widget_Button_Save_Processed),
                 *img_size
             ))
+
+
+# the triggered-event for setting the pretrained rekk-model
+def action_pretrained_rekk_model_triggered(self):
+    def pretrained_rekk_model_triggered():
+        # open the file-dialog and get the pretrained rekk-model
+        rekk_model_path, _ = QFileDialog.getOpenFileName(
+            parent=self,
+            caption=Strs.get_by_enum(Strs.Open_RekkModel_Dialog_Caption),
+            filter='RekkModel (*.h5)'
+        )
+        if rekk_model_path != '':
+            # set the path as a preference
+            PrefManager.set_pref('rekkmodel', rekk_model_path)
+            # then, re-load the weights of the pretrained rekk-model
+            load_pretrained_models()
+            self.write_log(f'Successfully set the path of the pretrained RekkModel to: <u>{rekk_model_path}</u>', Colors.LOG_REKKMODEL_SET)
+        return rekk_model_path
+    return pretrained_rekk_model_triggered
