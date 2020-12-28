@@ -79,6 +79,7 @@ class LoadedImagesWidget(QWidget):
             (self.action_show_proc, Strs.Loaded_Img_Widget_Action_Show_Processed_Image)
         )
         # initially change the text-color of the lbl-status
+        self.process_status = ProcessStatus.LOADING
         self.lbl_status.setStyleSheet('color: rgb{};'.format(ProcessStatus.LOADING.get_text_color()[::-1]))
         # initialize events
         self.init_events()
@@ -94,6 +95,8 @@ class LoadedImagesWidget(QWidget):
 
     # notify the status of the image-process has been changed
     def notify_status_change(self, status):
+        # update the member of status of the process
+        self.process_status = status
         # replace the text by registering the status-showing label
         Strs.register(self.lbl_status, status.value)
         # change the text-color according to the status
@@ -138,4 +141,4 @@ class LoadedImagesWidget(QWidget):
             cv2.imwrite(filename, get_processed_image(self.win_name))
             # write a log
             if self.log_writer is not None:
-                self.log_writer(f'The processed image \"{self.win_name}\" has been saved to the designated location.', Colors.LOG_IMAGE_SAVED)
+                self.log_writer(f'The processed image <u>{self.win_name}</u> has been saved to the designated location.', Colors.LOG_IMAGE_SAVED)

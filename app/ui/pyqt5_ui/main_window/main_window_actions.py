@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 from app.enums.colors import Colors
 from app.enums.dialog_status import DialogStatus
 from app.enums.strings import Strs
-from app.loaded_image import get_ext_of_loaded_image, get_processed_image
+from app.loaded_image import get_ext_of_loaded_image, get_processed_image, get_size_of_processed_image
 from app.preferences.pref_manager import PrefManager
 from app.ui.pyqt5_ui.url_input_dialog.url_input_dialog import URLInputDialog
 from utils.configuration import configuration as cfg
@@ -148,18 +148,38 @@ def action_save_selected_triggered(self):
 # the triggered-event for switching the language into chinese
 def action_lang_chi_triggered(self):
     def lang_chi_triggered():
-        PrefManager.set_pref('lang', 0)
-        Strs.notify_all_registered()
-        self.action_lang_chi.setChecked(True)
-        self.action_lang_eng.setChecked(False)
+        __change_lang_to(self, 0)
     return lang_chi_triggered
 
 
 # the triggered-event for switching the language into english
 def action_lang_eng_triggered(self):
     def lang_eng_triggered():
-        PrefManager.set_pref('lang', 1)
-        Strs.notify_all_registered()
+        __change_lang_to(self, 1)
+    return lang_eng_triggered
+
+
+# change the language to the designated one by its index (0 = chi, 1 = eng)
+def __change_lang_to(self, lang_idx):
+    # update at the global preferences file
+    PrefManager.set_pref('lang', lang_idx)
+    # notify all registered strings to be updated
+    Strs.notify_all_registered()
+    # change the checked item on the corresponding items
+    if lang_idx == 0:
+        self.action_lang_chi.setChecked(True)
+        self.action_lang_eng.setChecked(False)
+    else:
         self.action_lang_chi.setChecked(False)
         self.action_lang_eng.setChecked(True)
-    return lang_eng_triggered
+    # re-put the size of processed image on the button of saving on each item in the image-list
+    for widget in self.lis_imgs.get_all_widgets():
+        # get the size of this processed image
+        img_size = get_size_of_processed_image(widget.win_name)
+        # make sure the size exists, i.e., the process of this image has been done
+        if img_size is not None:
+            # re-put the size of this processed image on the corresponding widget
+            widget.btn_save_processed.setText('{} [{} x {}]'.format(
+                Strs.get_by_enum(Strs.Loaded_Img_Widget_Button_Save_Processed),
+                *img_size
+            ))

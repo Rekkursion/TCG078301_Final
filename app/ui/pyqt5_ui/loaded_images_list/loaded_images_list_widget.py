@@ -19,11 +19,20 @@ class LoadedImagesListWidget(QListWidget):
             self.setItemWidget(item, widget)
             return widget
 
+    # get all of the widgets in the list
+    def get_all_widgets(self):
+        return [self.itemWidget(self.item(i)) for i in range(0, self.count())]
+
     # get the designated widget by the corresponding window name
     def get_widget_by_win_name(self, win_name):
-        for widget in [self.itemWidget(self.item(i)) for i in range(0, self.count())]:
+        # iterate all widgets in the list
+        for i in range(0, self.count()):
+            # get a single widget
+            widget = self.itemWidget(self.item(i))
+            # check whether there's a widget which has a same name or not
             if widget.win_name == win_name:
                 return widget
+        # not found
         return None
 
     # deduplicate the window-name by adding a number before the original name

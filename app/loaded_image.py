@@ -64,6 +64,8 @@ def get_original_image(win_name):
 # get the current size of the processed image
 def get_size_of_processed_image(win_name):
     img = get_processed_image(win_name)
+    if img is None:
+        return None
     return img.shape[1], img.shape[0]
 
 
