@@ -45,6 +45,9 @@ def resize_image(win_name, flags, widget):
         return
     # calculate the new size
     new_size = (int(cur_img.shape[1] * scaling_factor), int(cur_img.shape[0] * scaling_factor))
+    # if the new size is smaller than the minimum size, the resizing CANNOT be done
+    if new_size[0] < cfg['MIN_SIZE_OF_IMG'] or new_size[1] < cfg['MIN_SIZE_OF_IMG']:
+        return
     # actually re-size the opencv-window
     img = cv2.resize(orig_img, new_size, interpolation=cv2.INTER_CUBIC)
     # draw the boxes on the resized original image

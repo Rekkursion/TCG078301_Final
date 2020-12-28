@@ -30,6 +30,9 @@ configuration = {
     # the scaling factor when resizing the opencv windows activated by mouse-wheeling
     'SCALING_FACTOR_ON_CV_WIN': 1.1,
 
+    # the minimum size of the image
+    'MIN_SIZE_OF_IMG': 30,
+
     # the sampling rate of mouse-moving event (face-framing) on opencv-windows
     'SAMPLING_RATE_OF_FRAMING_ON_CV_WIN': 5
 }

@@ -8,6 +8,7 @@ from app.environment.env_helpers import get_process_lock
 from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
 from app.ui.pyqt5_ui.log_area import LogArea
 from app.ui.pyqt5_ui.main_window.main_window_actions import *
+from utils.configuration import configuration as cfg
 from utils.help_func import do_process
 
 
@@ -70,6 +71,15 @@ class MainWindow(QMainWindow):
 
     # start the process of detection & judgement of a certain image
     def start_process(self, win_name, img):
+        # if the size of the loaded image is too small (either of the width & height must be bigger than 30)
+        if img.shape[0] < cfg['MIN_SIZE_OF_IMG'] or img.shape[1] < cfg['MIN_SIZE_OF_IMG']:
+            self.write_log('Failed at loading. The size of the image <u>{}</u> is too small ({} x {}), both of the width & the height must be bigger than {} pixels.'.format(
+                win_name,
+                img.shape[1],
+                img.shape[0],
+                cfg['MIN_SIZE_OF_IMG']
+            ), Colors.LOG_ERROR)
+            return
         win_name = self.lis_imgs.deduplicate_win_name(win_name)
         widget = self.lis_imgs.push_back(win_name, img)
         Thread(target=do_process, name=win_name, daemon=True,
@@ -77,5 +87,5 @@ class MainWindow(QMainWindow):
 
     # write a single log and the text-color at the log-area (text-browser)
     def write_log(self, text, color):
-        log = '<span style="color: rgb{};">{}</span>'.format(str(color), '<strong>{}</strong>'.format(text))
+        log = '<span style="color: rgb{};"> &gt; {}</span>'.format(str(color), '<strong>{}</strong>'.format(text))
         self.log_area.append(log)
