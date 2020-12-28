@@ -1,8 +1,8 @@
 import tensorflow
 from tensorflow.keras.utils import to_categorical
 
+from model_training.data_preprocess import *
 from model_training.model import RekkModel
-from utils.help_func import *
 
 
 # do the process of building, training, and saving the model up

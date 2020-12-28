@@ -7,7 +7,7 @@ from app.environment.env import *
 from app.loaded_image import get_processed_image
 from model_training.model import RekkModel
 from utils.configuration import configuration as cfg
-from utils.help_func import judge_avatars, draw_boxes, make_sure_order_of_points
+from utils.help_func import judge_avatars, draw_boxes
 
 
 # get the pre-trained rekk-model
@@ -33,6 +33,19 @@ def start_framing_face_by_user(x, y):
 
 # finish the by-user face-framing
 def finish_framing_face_by_user(win_name, x, y, widget):
+    # make sure the order of two points is from small to big
+    def make_sure_order_of_points(pt_1, pt_2):
+        if pt_1[0] < pt_2[0]:
+            if pt_1[1] < pt_2[1]:
+                return pt_1[0], pt_1[1], pt_2[0], pt_2[1]
+            else:
+                return pt_1[0], pt_2[1], pt_2[0], pt_1[1]
+        else:
+            if pt_1[1] < pt_2[1]:
+                return pt_2[0], pt_1[1], pt_1[0], pt_2[1]
+            else:
+                return pt_2[0], pt_2[1], pt_1[0], pt_1[1]
+
     img = get_processed_image(win_name)
     if img is None:
         return
