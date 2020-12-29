@@ -66,8 +66,10 @@ def action_load_from_clipboard_triggered(self):
             data = ImageGrab.grabclipboard()
             # if the grabbed data is an image
             if isinstance(data, Image.Image):
+                # convert the pil-img into a cv2-img
+                img = np.array(data.convert('RGB'))[:, :, ::-1]
                 has_loaded = True
-                start('From clipboard {}'.format(self.clipboard_counter), np.asarray(data.convert('RGB')))
+                start('From clipboard {}'.format(self.clipboard_counter), img)
             # if the grabbed data is a string, it could possibly be a filename, give it a try
             elif isinstance(data, str):
                 has_loaded = True
@@ -78,14 +80,16 @@ def action_load_from_clipboard_triggered(self):
                 for item in data:
                     # if this item is an image
                     if isinstance(item, Image.Image):
+                        # convert the pil-img into a cv2-img
+                        img = np.array(item.convert('RGB'))[:, :, ::-1]
                         has_loaded = True
-                        start('From clipboard {}'.format(self.clipboard_counter), np.asarray(item.convert('RGB')))
+                        start('From clipboard {}'.format(self.clipboard_counter), img)
                     # if this item is a string, it could possibly be a filename, give it a try
                     elif isinstance(item, str):
                         has_loaded = True
                         start('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
         except BaseException:
-            self.write_log('Failed to load the image from clipboard.', Colors.LOG_ERROR)
+            self.write_log('Failed to load the image from clipboard. Please make sure the copied object is an image.', Colors.LOG_ERROR)
         # if there's nothing loaded
         if not has_loaded:
             self.write_log('No images detected in the clipboard.', Colors.LOG_WARNING)

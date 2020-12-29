@@ -2,6 +2,7 @@ import socket
 import urllib
 
 import numpy as np
+import cv2
 from PIL import Image, UnidentifiedImageError
 from PIL.GifImagePlugin import GifImageFile
 from PyQt5 import uic
@@ -61,9 +62,9 @@ class URLInputDialog(QDialog):
             # download the file through the designated url
             urllib.request.urlretrieve(url, filename)
             # open the file as an image
-            img = Image.open(filename).convert('RGB')
+            img = cv2.imread(filename, cv2.IMREAD_COLOR)
             # if the loaded image is a gif, raise the error because the gif format is NOT supported
-            if isinstance(img, GifImageFile):
+            if isinstance(Image.fromarray(img), GifImageFile):
                 raise UnidentifiedImageError
             # set the image as the loaded one
             self.loaded_img = np.asarray(img)
