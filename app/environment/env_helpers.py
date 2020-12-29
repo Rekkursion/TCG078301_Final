@@ -11,12 +11,12 @@ from utils.configuration import configuration as cfg
 from utils.help_func import judge_avatars, draw_boxes
 
 
-# get the pre-trained rekk-model
+# get the pretrained rekk-model
 def get_rekk_model():
     return env_dict[REKK_MODEL]
 
 
-# get the pre-trained retinaface model from insightface
+# get the pretrained retinaface model from insightface
 def get_retinaface_model():
     return env_dict[RETINAFACE_MODEL]
 
@@ -102,16 +102,16 @@ def is_framing_face_by_user():
     return env_dict[FRAMING_FACE_BY_USER]
 
 
-# load the pre-trained models of both rekk-model and retinaface
+# load the pretrained models of both rekk-model and retinaface
 # noinspection PyBroadException
 def load_pretrained_models():
-    # load the pre-trained rekk-model which is used to judge the 2D/3D avatar (face)
+    # load the pretrained rekk-model which is used to judge the 2D/3D avatar (face)
     env_dict[REKK_MODEL] = RekkModel((cfg['SIZE_OF_IMGS'][0], cfg['SIZE_OF_IMGS'][1], 3), 2)
     # try to load the pre-set (if any) path of the pretrained rekk-model
     try:
         env_dict[REKK_MODEL].load_weights(PrefManager.get_pref('rekkmodel'))
     except BaseException:
         pass
-    # load the pre-trained retinaface from insightface which is used to detect the faces from an image
+    # load the pretrained retinaface from insightface which is used to detect the faces from an image
     env_dict[RETINAFACE_MODEL] = insightface.model_zoo.get_model('retinaface_r50_v1')
     env_dict[RETINAFACE_MODEL].prepare(ctx_id=-1, nms=0.4)

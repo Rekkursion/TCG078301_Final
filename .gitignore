@@ -5,3 +5,5 @@ __pycache__/
 .idea/
 app/res/todo
 app/res/dl_img/url-loaded
+model_training/sensible.py
+model_training/metadata.txt

@@ -1,8 +1,8 @@
 import socket
 import urllib
 
-import numpy as np
 import cv2
+import numpy as np
 from PIL import Image, UnidentifiedImageError
 from PIL.GifImagePlugin import GifImageFile
 from PyQt5 import uic

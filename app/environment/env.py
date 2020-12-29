@@ -1,10 +1,10 @@
 from threading import Lock
 
 env_dict = {
-    # the pre-trained rekk-model (used to judge a face image is a 2D or a 3D avatar)
+    # the pretrained rekk-model (used to judge a face image is a 2D or a 3D avatar)
     'REKK_MODEL': None,
 
-    # the pre-trained retinaface model from insightface (used to detect the faces from an image)
+    # the pretrained retinaface model from insightface (used to detect the faces from an image)
     'RETINAFACE_MODEL': None,
 
     # the threading-lock for doing the process of detection (and judgement)

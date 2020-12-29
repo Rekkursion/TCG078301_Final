@@ -46,7 +46,7 @@ def detect_faces(img):
 def judge_avatars(detected_faces):
     # the result-list
     ret = []
-    # loaded the pre-trained rekk-model
+    # loaded the pretrained rekk-model
     rekk = helper.get_rekk_model()
     if rekk is not None:
         # iterate all the detected faces
