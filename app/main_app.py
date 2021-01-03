@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication
 
 from app.environment import env_helpers as helper
 from app.preferences.pref_manager import PrefManager
-from app.ui.pyqt5_ui.main_window.main_window import MainWindow
+from app.ui.qt_ui.main_window.main_window import MainWindow
 
 
 # start the application

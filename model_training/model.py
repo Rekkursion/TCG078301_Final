@@ -39,7 +39,7 @@ class RekkModel(Sequential):
         self.add(Dense(128, activation='relu'))
         self.add(Dense(num_classes, activation='softmax'))
 
-    # do the prediction from a designated model and return the label-name of the prediction ('2D' or '3D')
+    # do the prediction from the model and return the prediction ('2D' or '3D')
     def do_prediction(self, img):
         if not (img is None):
             # convert the opencv-image into a pil-image

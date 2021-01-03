@@ -78,7 +78,8 @@ def frame_face_by_user(win_name, x, y):
         return
     # do the framing (draw the rectangle) only if the right button is down
     if env_dict[FRAMING_FACE_BY_USER]:
-        # to avoid low efficiency, sample a certain frames to do the framing (draw the rectangle), e.g., draw it per 5 times when the mouse-move event is invoked
+        # to avoid low efficiency, sample a certain frames to do the framing (draw the rectangle),
+        # e.g., draw it per 5 times when the mouse-move event is invoked
         env_dict[SAMPLING_COUNTER_OF_FRAMING] += 1
         if env_dict[SAMPLING_COUNTER_OF_FRAMING] == cfg['SAMPLING_RATE_OF_FRAMING_ON_CV_WIN']:
             # resize the passed image into the possibly-adjusted (by wheeling) size

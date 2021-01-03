@@ -11,7 +11,7 @@ from app.enums.strings import Strs
 from app.environment.env_helpers import load_pretrained_models
 from app.loaded_image import get_ext_of_loaded_image, get_processed_image, get_size_of_processed_image
 from app.preferences.pref_manager import PrefManager
-from app.ui.pyqt5_ui.url_input_dialog.url_input_dialog import URLInputDialog
+from app.ui.qt_ui.url_input_dialog.url_input_dialog import URLInputDialog
 from utils.configuration import configuration as cfg
 
 
@@ -44,7 +44,7 @@ def action_load_from_url_triggered(self):
             name = dialog.get_url()[:cfg['MAX_LEN_OF_WIN_NAME']]
             if self.start_process(name, dialog.get_loaded_image()):
                 self.write_log('The image <u>{}</u> has been loaded <i>from URL</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
-        else:
+        elif dialog.get_status() == DialogStatus.ERROR:
             self.write_log(dialog.get_err_msg(), Colors.LOG_ERROR)
     return load_from_url_triggered
 

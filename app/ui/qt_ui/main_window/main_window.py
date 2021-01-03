@@ -1,13 +1,12 @@
 from threading import Thread
 
 from PyQt5 import uic
-from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMainWindow
 
 from app.environment.env_helpers import get_process_lock
-from app.ui.pyqt5_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
-from app.ui.pyqt5_ui.log_area import LogArea
-from app.ui.pyqt5_ui.main_window.main_window_actions import *
+from app.ui.qt_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
+from app.ui.qt_ui.log_area import LogArea
+from app.ui.qt_ui.main_window.main_window_actions import *
 from utils.configuration import configuration as cfg
 from utils.help_func import do_process
 
@@ -27,14 +26,12 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         # load the UI
-        uic.loadUi('./ui/pyqt5_ui/main_window/main_window.ui', self)
+        uic.loadUi('./ui/qt_ui/main_window/main_window.ui', self)
         # the list-widget for showing all loaded images
         self.lis_imgs = LoadedImagesListWidget(self.write_log)
         self.main_layout.addWidget(self.lis_imgs)
         # the text-browser for showing logs
         self.log_area = LogArea()
-        self.log_area.setFont(QFont('Consolas', 10))
-        self.log_area.setFixedHeight(160)
         self.main_layout.addWidget(self.log_area)
         # initialize the events
         self.init_events()
@@ -76,7 +73,9 @@ class MainWindow(QMainWindow):
     def start_process(self, win_name, img):
         # if the size of the loaded image is too small (either of the width & height must be bigger than 30)
         if img.shape[0] < cfg['MIN_SIZE_OF_IMG'] or img.shape[1] < cfg['MIN_SIZE_OF_IMG']:
-            self.write_log('Failed at loading. The size of the image <u>{}</u> is too small ({} x {}), both of the width & the height must be bigger than {} pixels.'.format(
+            self.write_log('Failed at loading. \
+                           The size of the image <u>{}</u> is too small ({} x {}), \
+                           both of the width & the height must be bigger than {} pixels.'.format(
                 win_name,
                 img.shape[1],
                 img.shape[0],
@@ -91,7 +90,8 @@ class MainWindow(QMainWindow):
             rekk_model_path = action_pretrained_rekk_model_triggered(self)()
             # if the user still no select the pretrained rekk-model, return directly
             if rekk_model_path is None or rekk_model_path == '':
-                self.write_log('A pretrained <b>RekkModel</b> is a must for judging faces. Please set the path of the pretrained <b>RekkModel</b>.', Colors.LOG_ERROR)
+                self.write_log('A pretrained <b>RekkModel</b> is a must for judging faces. \
+                               Please set the path of the pretrained <b>RekkModel</b>.', Colors.LOG_ERROR)
                 return False
         win_name = self.lis_imgs.deduplicate_win_name(win_name)
         widget = self.lis_imgs.push_back(win_name, img)

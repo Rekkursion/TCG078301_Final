@@ -88,7 +88,7 @@ class Strs(Enum):
     def notify_registered(node):
         Strs.update_registered(node)
 
-    # notify all registered nodes to be updated
+    # notify all registered nodes to be updatedㄣ
     @staticmethod
     def notify_all_registered():
         for key, _ in _registered_dict.items():
