@@ -44,7 +44,7 @@ class LoadedImagesWidget(QWidget):
         self.lbl_status_title = QLabel()
         self.lbl_status = QLabel()
         self.lbl_num_of_detected = QLabel()
-        self.btn_show_img = QPushButton(QIcon(QPixmap('./res/img_search.png')), '')
+        self.btn_show_img = QPushButton(QIcon(QPixmap('./app/res/img_search.png')), '')
         self.btn_show_img.setStyleSheet("""
             QPushButton {background-color: transparent;}
             QPushButton:pressed {background-color: rgb(226, 230, 234);}

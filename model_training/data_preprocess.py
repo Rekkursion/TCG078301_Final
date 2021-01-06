@@ -1,4 +1,5 @@
 import os
+import random
 
 import numpy as np
 from PIL import Image
@@ -7,7 +8,7 @@ from utils.configuration import configuration as cfg
 
 
 # load images which are under a certain directory
-def load_imgs_from_dir(dir_name):
+def load_imgs_from_dir(dir_name, maximum=-1):
     # the result-list
     ret = []
     # iterate all the files under the designated directory
@@ -19,6 +20,9 @@ def load_imgs_from_dir(dir_name):
         img = img.resize(cfg['SIZE_OF_IMGS'], Image.ANTIALIAS)
         # append it to the result-list
         ret.append(np.asarray(img))
+    # make sure the number of loaded data does NOT exceed the maximum
+    if 0 <= maximum < len(ret):
+        ret = random.sample(ret, maximum)
     # return the result-list as a numpy-array
     return np.asarray(ret)
 

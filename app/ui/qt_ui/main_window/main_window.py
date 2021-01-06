@@ -3,9 +3,11 @@ from threading import Thread
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
 
+from app.enums.strings import Strs
 from app.environment.env_helpers import get_process_lock
+from app.preferences.pref_manager import PrefManager
 from app.ui.qt_ui.loaded_images_list.loaded_images_list_widget import LoadedImagesListWidget
-from app.ui.qt_ui.log_area import LogArea
+from app.ui.qt_ui.log_area.log_area import LogArea
 from app.ui.qt_ui.main_window.main_window_actions import *
 from utils.configuration import configuration as cfg
 from utils.help_func import do_process
@@ -26,7 +28,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         # load the UI
-        uic.loadUi('./ui/qt_ui/main_window/main_window.ui', self)
+        uic.loadUi('./app/ui/qt_ui/main_window/main_window.ui', self)
         # the list-widget for showing all loaded images
         self.lis_imgs = LoadedImagesListWidget(self.write_log)
         self.main_layout.addWidget(self.lis_imgs)

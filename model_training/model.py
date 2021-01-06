@@ -25,17 +25,21 @@ class RekkModel(Sequential):
     def build_up(self, input_shape, num_classes):
         # create and add the layers
         # the convolutional layers
-        self.add(Conv2D(64, kernel_size=3, activation='relu', input_shape=input_shape))
+        self.add(Conv2D(128, kernel_size=3, activation='relu', input_shape=input_shape))
         self.add(MaxPooling2D(pool_size=(2, 2)))
-        self.add(Conv2D(32, kernel_size=3, activation='relu'))
+        self.add(Conv2D(128, kernel_size=3, activation='relu'))
         self.add(MaxPooling2D(pool_size=(2, 2)))
-        self.add(Conv2D(32, kernel_size=3, activation='relu'))
+        self.add(Conv2D(64, kernel_size=3, activation='relu'))
+        self.add(MaxPooling2D(pool_size=(2, 2)))
+        self.add(Conv2D(64, kernel_size=3, activation='relu'))
         self.add(MaxPooling2D(pool_size=(2, 2)))
         self.add(Conv2D(64, kernel_size=3, activation='relu'))
         self.add(MaxPooling2D(pool_size=(2, 2)))
         # the flatten layer
         self.add(Flatten())
         # the fully-connected layers
+        self.add(Dense(128, activation='relu'))
+        self.add(Dense(128, activation='relu'))
         self.add(Dense(128, activation='relu'))
         self.add(Dense(num_classes, activation='softmax'))
 

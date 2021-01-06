@@ -24,7 +24,7 @@ class URLInputDialog(QDialog):
     def __init__(self):
         super(URLInputDialog, self).__init__()
         # load the UI
-        uic.loadUi('./ui/qt_ui/url_input_dialog/url_input_dialog.ui', self)
+        uic.loadUi('./app/ui/qt_ui/url_input_dialog/url_input_dialog.ui', self)
         # initialize the events
         self.init_events()
         # force this dialog being the top form
@@ -58,7 +58,7 @@ class URLInputDialog(QDialog):
     def download_image_from_url(self, url):
         try:
             # the pre-defined temporal filename
-            filename = './res/dl_img/url-loaded'
+            filename = './app/res/dl_img/url-loaded'
             # download the file through the designated url
             urllib.request.urlretrieve(url, filename)
             # open the file as an image

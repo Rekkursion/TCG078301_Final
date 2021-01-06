@@ -22,10 +22,10 @@ configuration = {
     'RETINAFACE_SCALE': 1.0,
 
     # the path of anime-avatar files
-    'ANIME_AVATAR_DIR': 'D:/rekkursion/pictures/datasets/anime_avatar/',
+    'ANIME_AVATAR_DIR': 'D:/rekkursion/pictures/datasets/2d/',
 
     # the path of real-avatar files
-    'REAL_AVATAR_DIR': 'D:/rekkursion/pictures/datasets/real_avatar/',
+    'REAL_AVATAR_DIR': 'D:/rekkursion/pictures/datasets/3d/',
 
     # the scaling factor when resizing the opencv windows activated by mouse-wheeling
     'SCALING_FACTOR_ON_CV_WIN': 1.1,

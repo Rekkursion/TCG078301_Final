@@ -6,7 +6,7 @@ class PrefManager:
     pref_dict = None
 
     # the file path of the preferences json file
-    json_file_path = './preferences/pref.json'
+    json_file_path = './app/preferences/pref.json'
 
     # set a single preference
     @staticmethod
