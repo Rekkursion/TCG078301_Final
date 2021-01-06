@@ -1,8 +1,6 @@
 from threading import Thread
-
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
-
 from app.enums.strings import Strs
 from app.environment.env_helpers import get_process_lock
 from app.preferences.pref_manager import PrefManager
