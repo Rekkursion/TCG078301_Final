@@ -13,6 +13,7 @@ from app.loaded_image import get_ext_of_loaded_image, get_processed_image, get_s
 from app.preferences.pref_manager import PrefManager
 from app.ui.qt_ui.url_input_dialog.url_input_dialog import URLInputDialog
 from utils.configuration import configuration as cfg
+from utils.help_func import imread_utf8_supported
 
 
 # the triggered-event of the action-load-from-local
@@ -27,7 +28,7 @@ def action_load_from_local_triggered(self):
         # iterate the filenames to do the processes
         for filename in filename_list:
             name = filename[:cfg['MAX_LEN_OF_WIN_NAME']]
-            if self.start_process(name, cv2.imread(filename, cv2.IMREAD_COLOR)):
+            if self.start_process(name, imread_utf8_supported(filename)):
                 self.write_log('The image <u>{}</u> has been loaded <i>from local</i>.'.format(name), Colors.LOG_LOAD_IMAGE)
     return load_from_local_triggered
 
@@ -73,7 +74,7 @@ def action_load_from_clipboard_triggered(self):
             # if the grabbed data is a string, it could possibly be a filename, give it a try
             elif isinstance(data, str):
                 has_loaded = True
-                start('From clipboard {}'.format(self.clipboard_counter), cv2.imread(data, cv2.IMREAD_COLOR))
+                start('From clipboard {}'.format(self.clipboard_counter), imread_utf8_supported(data))
             # if the grabbed data is a list
             elif isinstance(data, list):
                 # iterate the list to try getting the image(s)
@@ -87,7 +88,7 @@ def action_load_from_clipboard_triggered(self):
                     # if this item is a string, it could possibly be a filename, give it a try
                     elif isinstance(item, str):
                         has_loaded = True
-                        start('From clipboard {}'.format(self.clipboard_counter), cv2.imread(item, cv2.IMREAD_COLOR))
+                        start('From clipboard {}'.format(self.clipboard_counter), imread_utf8_supported(item))
         except BaseException:
             self.write_log('Failed to load the image from clipboard. Please make sure the copied object is an image.', Colors.LOG_ERROR)
         # if there's nothing loaded

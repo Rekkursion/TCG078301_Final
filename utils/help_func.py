@@ -129,3 +129,11 @@ def replace_file_ext(filename, replacer_ext):
     # else, replace the extension
     else:
         return '{}{}'.format(filename[:len(filename) - len(replacee_ext)], replacer_ext)
+
+
+# to support utf-8 characters in the file path when loading the image through open-cv,
+# since the original 'cv2.imread' does NOT support the path that has non-ascii characters in it
+def imread_utf8_supported(file_path):
+    im_stream = open(file_path, 'rb')
+    im_bytes = bytearray(im_stream.read())
+    return cv2.imdecode(np.asarray(im_bytes, dtype=np.uint8), cv2.IMREAD_COLOR)

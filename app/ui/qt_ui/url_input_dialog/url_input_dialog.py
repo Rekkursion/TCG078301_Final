@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QDialog
 
 from app.enums.dialog_status import DialogStatus
 from app.enums.strings import Strs
+from utils.help_func import imread_utf8_supported
 
 
 # the dialog for the user to input the image-URL
@@ -62,7 +63,7 @@ class URLInputDialog(QDialog):
             # download the file through the designated url
             urllib.request.urlretrieve(url, filename)
             # open the file as an image
-            img = cv2.imread(filename, cv2.IMREAD_COLOR)
+            img = imread_utf8_supported(filename)
             # if the loaded image is a gif, raise the error because the gif format is NOT supported
             if isinstance(Image.fromarray(img), GifImageFile):
                 raise UnidentifiedImageError
