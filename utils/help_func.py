@@ -71,16 +71,19 @@ def draw_boxes(win_name, img, judged_faces=(), orig_img=None):
     # add the detected face into the loaded-image-dictionary
     for (_, pt_1, pt_2, judged_label) in judged_faces:
         reversed_factor = orig_img.shape[0] / new_img.shape[0]
-        add_detected_face(win_name, (int(pt_1[0] * reversed_factor), int(pt_1[1] * reversed_factor)), (int(pt_2[0] * reversed_factor), int(pt_2[1] * reversed_factor)), judged_label)
+        add_detected_face(win_name, (int(pt_1[0] * reversed_factor), int(pt_1[1] * reversed_factor)),
+                          (int(pt_2[0] * reversed_factor), int(pt_2[1] * reversed_factor)), judged_label)
     # calculate the scaling-factor
     scaling_factor = new_img.shape[0] / orig_img.shape[0]
     # iterate all detected-and-judged faces (avatars)
     for (pt_1, pt_2, judged_label) in get_detected_faces(win_name):
         clr = Colors.FACE_2D_BOX if judged_label == cfg['CLS_NAMES'][0] else Colors.FACE_3D_BOX
         # draw the rectangle on a single face
-        cv2.rectangle(new_img, (int(pt_1[0] * scaling_factor), int(pt_1[1] * scaling_factor)), (int(pt_2[0] * scaling_factor), int(pt_2[1] * scaling_factor)), clr, 2)
+        cv2.rectangle(new_img, (int(pt_1[0] * scaling_factor), int(pt_1[1] * scaling_factor)),
+                      (int(pt_2[0] * scaling_factor), int(pt_2[1] * scaling_factor)), clr, 2)
         # put the judged label on the corresponding face
-        cv2.putText(new_img, judged_label, (int(pt_1[0] * scaling_factor), int((pt_1[1] - 4) * scaling_factor)), cv2.FONT_HERSHEY_PLAIN, 1, clr, 2)
+        cv2.putText(new_img, judged_label, (int(pt_1[0] * scaling_factor), int((pt_1[1] - 4) * scaling_factor)),
+                    cv2.FONT_HERSHEY_PLAIN, 1, clr, 2)
     # show the boxes-drawn image
     cv2.imshow(win_name, new_img)
     # update the processed image
@@ -103,7 +106,8 @@ def do_process(win_name, img, lock, widget, log_writer):
             # draw the boxes of detected-and-judged faces w/ the corresponding colors
             draw_boxes(win_name, img, judged_faces, orig_img=cv2.copyMakeBorder(img, 0, 0, 0, 0, cv2.BORDER_REPLICATE))
             widget.notify_status_change(ProcessStatus.DONE)
-            log_writer('The process of the loaded image <u>{}</u> has been done: {} 2D & {} 3D faces detected.'.format(win_name, *get_num_of_detected_faces(win_name)), Colors.LOG_PROCESS_DONE)
+            log_writer('The process of the loaded image <u>{}</u> has been done: {} 2D & {} 3D faces detected.'
+                       .format(win_name, *get_num_of_detected_faces(win_name)), Colors.LOG_PROCESS_DONE)
             # set the mouse callback to activate by-user events
             cv2.setMouseCallback(win_name, mouse_callback, (win_name, widget,))
         except BaseException:
