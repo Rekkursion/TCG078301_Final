@@ -9,7 +9,7 @@
 | 作業系統 | Windows 10 |
 | Python 版本 | Python 3.7.8<span style="color:red">**\***</span> |
 | 套件需求 | 撰於 <a href='https://github.com/Rekkursion/TCG078301_Final/blob/master/requirements.txt'>requirements.txt</a> 內 |
-| 預訓練之 RekkModels | 連結一：https://drive.google.com/drive/folders/1CpQpIc-YF4uC9CBUaQADXHqSPn1SFtCo?usp=sharing <br /> 連結二：https://mega.nz/file/mbYmFRSL#yLe9ZUgyvIOoz7SvgDZKNtmPE-Eyxi7AtrOQ69LtgQQ |
+| 預訓練之 RekkModels | 連結一：https://drive.google.com/file/d/1Wzugo7b_gNyKTsl6DsN8hsgkW8cMI6bX/view?usp=sharing <br /> 連結二：https://mega.nz/file/mbYmFRSL#yLe9ZUgyvIOoz7SvgDZKNtmPE-Eyxi7AtrOQ69LtgQQ |
 
 <span style="color:red">\*本專題中尚未嘗試其他版本的 Python，但根據我資工系大四專題製作的經驗，**mxnet 似乎只支援 Python 3.x**。因此在這邊強烈<ins>建議使用 **pyenv** & **virtualenv** 或直接使用 PyCharm 內建功能來搭建**虛擬 Python 環境**</ins>，可方便安裝指定版本的 Python 及相關套件而不影響現有環境，以方便執行本專題。</span>
 
